@@ -43,7 +43,7 @@ void main() {
           final query = 'query';
 
           when(localSource.find(query))
-              .thenThrow(() => Future.error(Exception()));
+              .thenAnswer((_) => Future.error(Exception()));
           when(remoteSource.find(query))
               .thenAnswer((_) => Future.value([Book('a')]));
 
@@ -64,7 +64,7 @@ void main() {
           final query = 'query';
 
           when(localSource.find(query))
-              .thenThrow(() => Future.error(Exception()));
+              .thenAnswer((_) => Future.error(Exception()));
           when(remoteSource.find(query))
               .thenAnswer((_) => Future.value([Book('a')]));
 

@@ -9,8 +9,12 @@ class BookRepositoryImpl implements BookRepository {
   final RemoteBookSource _remoteSource;
 
   @override
-  Future<List<Book>> find(String query, {int page = 1}) {
-    // TODO: implement find
-    throw UnimplementedError();
+  Future<List<Book>> find(String query, {int page = 1}) async {
+    return _localSource
+        .find(query, page: page)
+        .catchError((_) => _remoteSource.find(query, page: page).then((result) {
+              _localSource.save(query: query, page: page, data: result);
+              return result;
+            }));
   }
 }
