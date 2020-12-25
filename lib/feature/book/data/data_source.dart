@@ -1,4 +1,4 @@
-import 'package:bookshelf/feature/book/domain/model/book.dart';
+import 'package:bookshelf/feature/book/domain/model.dart';
 
 abstract class LocalBookSource {
   Future<List<Book>> find(String query, {int page = 1});

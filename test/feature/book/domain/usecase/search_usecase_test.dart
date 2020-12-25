@@ -1,6 +1,6 @@
 import 'package:bookshelf/common/exception/exceptions.dart';
-import 'package:bookshelf/feature/book/domain/model/book.dart';
-import 'package:bookshelf/feature/book/domain/usecase/search.dart';
+import 'package:bookshelf/feature/book/domain/model.dart';
+import 'package:bookshelf/feature/book/domain/usecase.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 

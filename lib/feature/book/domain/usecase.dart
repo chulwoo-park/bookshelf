@@ -1,6 +1,6 @@
 import 'package:bookshelf/common/exception/exceptions.dart';
-import 'package:bookshelf/feature/book/domain/model/book.dart';
-import 'package:bookshelf/feature/book/domain/repository/repository.dart';
+import 'package:bookshelf/feature/book/domain/model.dart';
+import 'package:bookshelf/feature/book/domain/repository.dart';
 
 class SearchParam {
   const SearchParam(this.query, {this.page = 1});

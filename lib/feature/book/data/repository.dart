@@ -1,6 +1,6 @@
-import 'package:bookshelf/feature/book/data/source/data_source.dart';
-import 'package:bookshelf/feature/book/domain/model/book.dart';
-import 'package:bookshelf/feature/book/domain/repository/repository.dart';
+import 'package:bookshelf/feature/book/data/data_source.dart';
+import 'package:bookshelf/feature/book/domain/model.dart';
+import 'package:bookshelf/feature/book/domain/repository.dart';
 
 class BookRepositoryImpl implements BookRepository {
   const BookRepositoryImpl(this._localSource, this._remoteSource);
