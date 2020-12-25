@@ -21,17 +21,25 @@ void main() {
 
     group('search test', () {
       test(
+        'Given query and page When find Then cache key should be [query]_[page] format',
+        () async {
+          when(localSource.getList(any))
+              .thenAnswer((_) => Future.value([Book('a')]));
+          await repository.find('query', page: 1);
+          verify(localSource.getList('query_1'));
+        },
+      );
+
+      test(
         'Given local data When find Then return data from local',
         () async {
-          final query = 'query';
-
-          when(localSource.find(query))
+          when(localSource.getList(any))
               .thenAnswer((_) => Future.value([Book('a')]));
 
-          final result = await repository.find(query);
+          final result = await repository.find('query');
 
-          verify(localSource.find(query));
-          verifyNever(remoteSource.find(query));
+          verify(localSource.getList(any));
+          verifyNever(remoteSource.find(any));
 
           expect(result, [Book('a')]);
         },
@@ -40,18 +48,16 @@ void main() {
       test(
         'Given local error When find Then return data from remote',
         () async {
-          final query = 'query';
-
-          when(localSource.find(query))
+          when(localSource.getList(any))
               .thenAnswer((_) => Future.error(Exception()));
-          when(remoteSource.find(query))
+          when(remoteSource.find(any))
               .thenAnswer((_) => Future.value([Book('a')]));
 
-          final result = await repository.find(query);
+          final result = await repository.find('query');
 
           verifyInOrder([
-            localSource.find(query),
-            remoteSource.find(query),
+            localSource.getList(any),
+            remoteSource.find('query'),
           ]);
 
           expect(result, [Book('a')]);
@@ -61,19 +67,17 @@ void main() {
       test(
         'Given local error When find Then return save remote data into local',
         () async {
-          final query = 'query';
-
-          when(localSource.find(query))
+          when(localSource.getList(any))
               .thenAnswer((_) => Future.error(Exception()));
-          when(remoteSource.find(query))
+          when(remoteSource.find(any))
               .thenAnswer((_) => Future.value([Book('a')]));
 
-          await repository.find(query);
+          await repository.find('query');
 
           verifyInOrder([
-            localSource.find(query),
-            remoteSource.find(query),
-            localSource.save(query: query, page: 1, data: [Book('a')]),
+            localSource.getList(any),
+            remoteSource.find(any),
+            localSource.saveList(any, [Book('a')]),
           ]);
         },
       );

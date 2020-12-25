@@ -1,9 +1,9 @@
 import 'package:bookshelf/feature/book/domain/model.dart';
 
 abstract class LocalBookSource {
-  Future<List<Book>> find(String query, {int page = 1});
+  Future<List<Book>> getList(String key);
 
-  void save({String query, int page, List<Book> data});
+  Future<void> saveList(String key, List<Book> data);
 }
 
 abstract class RemoteBookSource {

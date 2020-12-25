@@ -10,10 +10,12 @@ class BookRepositoryImpl implements BookRepository {
 
   @override
   Future<List<Book>> find(String query, {int page = 1}) async {
+    final cacheKey = '${query}_$page';
+
     return _localSource
-        .find(query, page: page)
+        .getList(cacheKey)
         .catchError((_) => _remoteSource.find(query, page: page).then((result) {
-              _localSource.save(query: query, page: page, data: result);
+              _localSource.saveList(cacheKey, result);
               return result;
             }));
   }
