@@ -9,6 +9,8 @@ class SearchParam {
   final int page;
 }
 
+/// Shows book search information for specific keywords.
+/// The searched data is cached.
 class SearchUseCase {
   const SearchUseCase(this._repository);
 
