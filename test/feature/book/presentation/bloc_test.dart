@@ -7,7 +7,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
 import '../../../mock/mock.dart';
-import '../../../util/util.dart';
 
 void main() {
   group('book list block test', () {
@@ -62,49 +61,71 @@ void main() {
         },
       );
 
-      test('Given failure state When load more Then next page never loaded',
-          () async {
-        when(search.execute(any))
-            .thenAnswer((realInvocation) => Future.error(Exception()));
-        bloc.add(BookSearched('foo'));
-        expect(await bloc.take(2).last, isA<Failure>());
-
-        await bloc.addAndSettle(NextPageRequested());
-        await bloc.close();
-        expect(await bloc.length, 0);
-      });
+      test(
+        'When searched without keyword Then result never load',
+        () async {
+          bloc.add(BookSearched(''));
+          bloc.close();
+          expect(await bloc.length, 0);
+        },
+      );
 
       test(
-          'Given error When load more Then state change to success with failure load more state',
-          () async {
-        when(search.execute(SearchParam('query', page: 1)))
-            .thenAnswer((_) => Future.value([]));
-        when(search.execute(SearchParam('query', page: 2)))
-            .thenAnswer((_) => Future.error(Exception()));
+        'Given failure state When load more Then next page never load',
+        () async {
+          when(search.execute(any))
+              .thenAnswer((_) => Future.error(Exception()));
+          bloc.add(BookSearched('foo'));
+          expectLater(
+            bloc,
+            emitsInOrder(
+              [
+                isA<Loading>(),
+                isA<Failure>(),
+              ],
+            ),
+          );
 
-        expect(bloc.state, isA<Initial>());
-        bloc.addAndSettle(BookSearched('query'));
-        bloc.addAndSettle(NextPageRequested());
-        expectLater(
-          bloc,
-          emitsInOrder(
-            [
-              isA<Loading>(),
-              isA<Success>(),
-              Success(
-                [],
-                query: 'query',
-                loadMoreState: BookListLoadMoreState.loading,
-              ),
-              Success(
-                [],
-                query: 'query',
-                loadMoreState: BookListLoadMoreState.failure,
-              ),
-            ],
-          ),
-        );
-      });
+          bloc.add(NextPageRequested());
+          bloc.close();
+
+          expect(await bloc.length, 2);
+        },
+      );
+
+      test(
+        'Given error When load more Then state change to success with failure load more state',
+        () async {
+          when(search.execute(SearchParam('query', page: 1)))
+              .thenAnswer((_) => Future.value([]));
+          when(search.execute(SearchParam('query', page: 2)))
+              .thenAnswer((_) => Future.error(Exception()));
+
+          expect(bloc.state, isA<Initial>());
+          bloc.add(BookSearched('query'));
+          bloc.add(NextPageRequested());
+          expectLater(
+            bloc,
+            emitsInOrder(
+              [
+                isA<Loading>(),
+                isA<Success>(),
+                Success(
+                  [],
+                  query: 'query',
+                  loadMoreState: BookListLoadMoreState.loading,
+                ),
+                Success(
+                  [],
+                  query: 'query',
+                  loadMoreState: BookListLoadMoreState.failure,
+                ),
+              ],
+            ),
+          );
+        },
+      );
+
       test(
         'Given success state When load more Then the loaded data is added to end of previous data',
         () {

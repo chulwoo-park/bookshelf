@@ -18,7 +18,7 @@ class BookListBloc extends Bloc<BookListEvent, BookListState> {
   }
 
   Stream<BookListState> _mapSearchEvent(BookSearched event) async* {
-    if (state is Loading) {
+    if (state is Loading || event.query == null || event.query.isEmpty) {
       return;
     }
 
