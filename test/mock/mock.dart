@@ -5,8 +5,8 @@ import 'package:bookshelf/feature/book/domain/repository.dart';
 import 'package:bookshelf/feature/book/domain/usecase.dart';
 import 'package:mockito/mockito.dart';
 
-Page<Book> mockPage(List<Book> books) {
-  return Page(page: 1, totalCount: books.length, items: books);
+Page<Book> mockPage(List<Book> books, {int totalCount}) {
+  return Page(page: 1, totalCount: totalCount ?? books.length, items: books);
 }
 
 Book mockBook(String title) {

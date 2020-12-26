@@ -71,6 +71,37 @@ void main() {
       );
 
       test(
+        'Given total data When search Then next page never load',
+        () async {
+          when(search.execute(any)).thenAnswer(
+            (_) => Future.value(
+              mockPage(
+                [
+                  mockBook('a'),
+                  mockBook('b'),
+                ],
+              ),
+            ),
+          );
+          bloc.add(BookSearched('foo'));
+          expectLater(
+            bloc,
+            emitsInOrder(
+              [
+                isA<Loading>(),
+                isA<Success>(),
+              ],
+            ),
+          );
+
+          bloc.add(NextPageRequested());
+          bloc.close();
+
+          expect(await bloc.length, 2);
+        },
+      );
+
+      test(
         'Given failure state When load more Then next page never load',
         () async {
           when(search.execute(any))
@@ -96,8 +127,8 @@ void main() {
       test(
         'Given error When load more Then state change to success with failure load more state',
         () async {
-          when(search.execute(SearchParam('query', page: 1)))
-              .thenAnswer((_) => Future.value(mockPage([])));
+          when(search.execute(SearchParam('query', page: 1))).thenAnswer(
+              (_) => Future.value(mockPage([mockBook('a')], totalCount: 2)));
           when(search.execute(SearchParam('query', page: 2)))
               .thenAnswer((_) => Future.error(Exception()));
 
@@ -111,12 +142,14 @@ void main() {
                 isA<Loading>(),
                 isA<Success>(),
                 Success(
-                  [],
+                  mockPage([mockBook('a')]),
+                  totalCount: 2,
                   query: 'query',
                   loadMoreState: BookListLoadMoreState.loading,
                 ),
                 Success(
-                  [],
+                  mockPage([mockBook('a')]),
+                  totalCount: 2,
                   query: 'query',
                   loadMoreState: BookListLoadMoreState.failure,
                 ),
@@ -129,10 +162,16 @@ void main() {
       test(
         'Given success state When load more Then the loaded data is added to end of previous data',
         () {
-          when(search.execute(SearchParam('query', page: 1)))
-              .thenAnswer((_) => Future.value(mockPage([mockBook('a')])));
-          when(search.execute(SearchParam('query', page: 2)))
-              .thenAnswer((_) => Future.value(mockPage([mockBook('b')])));
+          when(search.execute(SearchParam('query', page: 1))).thenAnswer(
+            (_) => Future.value(
+              mockPage([mockBook('a')], totalCount: 2),
+            ),
+          );
+          when(search.execute(SearchParam('query', page: 2))).thenAnswer(
+            (_) => Future.value(
+              mockPage([mockBook('b')]),
+            ),
+          );
 
           expect(bloc.state, isA<Initial>());
           bloc.add(BookSearched('query'));
@@ -143,19 +182,22 @@ void main() {
               [
                 isA<Loading>(),
                 Success(
-                  [mockBook('a')],
+                  mockPage([mockBook('a')]),
+                  totalCount: 2,
                   query: 'query',
                   page: 1,
                   loadMoreState: BookListLoadMoreState.idle,
                 ),
                 Success(
-                  [mockBook('a')],
+                  mockPage([mockBook('a')]),
+                  totalCount: 2,
                   query: 'query',
                   page: 1,
                   loadMoreState: BookListLoadMoreState.loading,
                 ),
                 Success(
-                  [mockBook('a'), mockBook('b')],
+                  mockPage([mockBook('a'), mockBook('b')]),
+                  totalCount: 2,
                   query: 'query',
                   page: 2,
                   loadMoreState: BookListLoadMoreState.idle,
