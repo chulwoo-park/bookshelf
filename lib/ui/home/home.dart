@@ -27,6 +27,12 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  bool get canRequestLoadMore {
+    final currentState = _bloc?.state;
+    return currentState is Success &&
+        currentState.loadMoreState == BookListLoadMoreState.idle;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -53,8 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             BlocConsumer<BookListBloc, BookListState>(
               listener: (context, state) {
-                if (state is Success &&
-                    state.loadMoreState == BookListLoadMoreState.idle) {
+                if (canRequestLoadMore) {
                   _loadNextPageIfTooShort(state);
                 }
               },
@@ -81,8 +86,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _loadNextPageIfTooShort(BookListState state) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final itemsTooShort = _scrollController.position.maxScrollExtent == 0;
+      if (!canRequestLoadMore) return;
 
+      final itemsTooShort = _scrollController.position.maxScrollExtent == 0;
       if (itemsTooShort) {
         _bloc?.add(NextPageRequested());
       }
@@ -90,8 +96,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   bool _handleScrollNotification(ScrollNotification scroll) {
+    if (!mounted || !canRequestLoadMore) return true;
+
     if (scroll.metrics.extentAfter < 500) {
-      _bloc.add(NextPageRequested());
+      _bloc?.add(NextPageRequested());
     }
     return true;
   }
