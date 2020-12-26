@@ -32,6 +32,7 @@ class BookListBloc extends Bloc<BookListEvent, BookListState> {
       );
       yield Success(
         List.unmodifiable(result),
+        totalCount: result.totalCount,
         query: event.query,
         page: 1,
       );
@@ -48,7 +49,8 @@ class BookListBloc extends Bloc<BookListEvent, BookListState> {
     }
 
     final Success state = this.state;
-    if (state.loadMoreState == BookListLoadMoreState.loading) {
+    if (state.loadMoreState == BookListLoadMoreState.loading ||
+        state.totalCount == state.items.length) {
       return;
     }
 
@@ -70,7 +72,7 @@ class BookListBloc extends Bloc<BookListEvent, BookListState> {
       }
       yield state.copyWith(
         data: List.unmodifiable(
-          state.data + result,
+          state.items + result,
         ),
         page: state.page + 1,
         loadMoreState: loadMoreState,

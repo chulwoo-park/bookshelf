@@ -27,7 +27,9 @@ class Page<T> with ListMixin<T> implements List<T> {
   void operator []=(int index, T value) => _items[index] = value;
 
   @override
-  int get hashCode => hashValues(page, totalCount, _items);
+  int get hashCode {
+    return 31 + page.hashCode + totalCount.hashCode + _items.hashCode;
+  }
 
   @override
   bool operator ==(Object other) {
