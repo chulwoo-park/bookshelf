@@ -9,7 +9,7 @@ import 'package:mockito/mockito.dart';
 import '../../../mock/mock.dart';
 
 void main() {
-  group('book list block test', () {
+  group('book list bloc test', () {
     group('book searched event test', () {
       SearchUseCase search;
       BookListBloc bloc;
@@ -54,6 +54,7 @@ void main() {
                 BookListLoaded(
                   [],
                   query: 'query',
+                  totalCount: 0,
                   loadMoreState: BookListLoadMoreState.idle,
                 ),
               ],
@@ -70,6 +71,16 @@ void main() {
           expect(await bloc.length, 0);
         },
       );
+    });
+
+    group('next page requested event test', () {
+      SearchUseCase search;
+      BookListBloc bloc;
+
+      setUp(() {
+        search = MockSearchUseCase();
+        bloc = BookListBloc(search);
+      });
 
       test(
         'Given total data When search Then next page never load',
