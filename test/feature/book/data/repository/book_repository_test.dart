@@ -23,7 +23,7 @@ void main() {
         'Given query and page When find Then cache key should be [query]_[page] format',
         () async {
           when(localSource.getList(any))
-              .thenAnswer((_) => Future.value([mockBook('a')]));
+              .thenAnswer((_) => Future.value(mockPage([mockBook('a')])));
           await repository.find('query', page: 1);
           verify(localSource.getList('query_1'));
         },
@@ -32,8 +32,9 @@ void main() {
       test(
         'Given local data When find Then return data from local',
         () async {
-          when(localSource.getList(any))
-              .thenAnswer((_) => Future.value([mockBook('a')]));
+          when(localSource.getList(any)).thenAnswer((_) => Future.value(
+                mockPage([mockBook('a')]),
+              ));
 
           final result = await repository.find('query');
 
@@ -50,7 +51,7 @@ void main() {
           when(localSource.getList(any))
               .thenAnswer((_) => Future.error(Exception()));
           when(remoteSource.find(any))
-              .thenAnswer((_) => Future.value([mockBook('a')]));
+              .thenAnswer((_) => Future.value(mockPage([mockBook('a')])));
 
           final result = await repository.find('query');
 
@@ -69,14 +70,14 @@ void main() {
           when(localSource.getList(any))
               .thenAnswer((_) => Future.error(Exception()));
           when(remoteSource.find(any))
-              .thenAnswer((_) => Future.value([mockBook('a')]));
+              .thenAnswer((_) => Future.value(mockPage([mockBook('a')])));
 
           await repository.find('query');
 
           verifyInOrder([
             localSource.getList(any),
             remoteSource.find(any),
-            localSource.saveList(any, [mockBook('a')]),
+            localSource.saveList(any, mockPage([mockBook('a')])),
           ]);
         },
       );

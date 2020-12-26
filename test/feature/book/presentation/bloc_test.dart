@@ -40,7 +40,8 @@ void main() {
       test(
         'Given some data When book searched by query Then state change to success with idle load more state',
         () {
-          when(search.execute(any)).thenAnswer((_) => Future.value([]));
+          when(search.execute(any))
+              .thenAnswer((_) => Future.value(mockPage([])));
 
           expect(bloc.state, isA<Initial>());
           bloc.add(BookSearched('query'));
@@ -96,7 +97,7 @@ void main() {
         'Given error When load more Then state change to success with failure load more state',
         () async {
           when(search.execute(SearchParam('query', page: 1)))
-              .thenAnswer((_) => Future.value([]));
+              .thenAnswer((_) => Future.value(mockPage([])));
           when(search.execute(SearchParam('query', page: 2)))
               .thenAnswer((_) => Future.error(Exception()));
 
@@ -129,9 +130,9 @@ void main() {
         'Given success state When load more Then the loaded data is added to end of previous data',
         () {
           when(search.execute(SearchParam('query', page: 1)))
-              .thenAnswer((_) => Future.value([mockBook('a')]));
+              .thenAnswer((_) => Future.value(mockPage([mockBook('a')])));
           when(search.execute(SearchParam('query', page: 2)))
-              .thenAnswer((_) => Future.value([mockBook('b')]));
+              .thenAnswer((_) => Future.value(mockPage([mockBook('b')])));
 
           expect(bloc.state, isA<Initial>());
           bloc.add(BookSearched('query'));

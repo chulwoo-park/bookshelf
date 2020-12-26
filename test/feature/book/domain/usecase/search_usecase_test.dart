@@ -34,10 +34,10 @@ void main() {
 
       when(repository.find(query)).thenAnswer(
         (_) => Future.value(
-          [
+          mockPage([
             mockBook('a'),
             mockBook('b'),
-          ],
+          ]),
         ),
       );
 
