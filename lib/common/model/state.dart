@@ -27,4 +27,13 @@ class Success<T> implements AsyncState {
   const Success(this.data);
 
   final T data;
+
+  @override
+  int get hashCode => 31 + runtimeType.hashCode + data.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is Success<T> && data == other.data);
+  }
 }

@@ -87,11 +87,30 @@ class BookListBloc extends Bloc<BookListEvent, AsyncState> {
 }
 
 class BookDetailBloc extends Bloc<BookDetailEvent, AsyncState> {
-  BookDetailBloc([AsyncState initialState]) : super(initialState);
+  BookDetailBloc(this._getDetail) : super(Initial());
+
+  final GetDetailUseCase _getDetail;
 
   @override
-  Stream<AsyncState> mapEventToState(BookDetailEvent event) {
-    // TODO: implement mapEventToState
-    throw UnimplementedError();
+  Stream<AsyncState> mapEventToState(BookDetailEvent event) async* {
+    if (event is BookDetailRequested) {
+      yield* _mapDetailRequestedEvent(event);
+    }
+  }
+
+  Stream<AsyncState> _mapDetailRequestedEvent(
+    BookDetailRequested event,
+  ) async* {
+    if (state is Loading || event.isbn13 == null || event.isbn13.isEmpty) {
+      return;
+    }
+
+    yield Loading();
+    try {
+      final result = await _getDetail.execute(GetDetailParam(event.isbn13));
+      yield Success(result);
+    } catch (e, s) {
+      yield Failure(e, s);
+    }
   }
 }
