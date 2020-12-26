@@ -4,6 +4,7 @@ import 'package:bookshelf/feature/book/domain/model.dart';
 import 'package:bookshelf/feature/book/presentation/bloc.dart';
 import 'package:bookshelf/feature/book/presentation/event.dart';
 import 'package:bookshelf/feature/book/presentation/state.dart';
+import 'package:bookshelf/ui/home/widget/book_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -67,10 +68,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (state is Loading) {
                   return _buildLoadingIndicator();
                 } else if (state is Success) {
-                  return _SliverBookList(
-                    books: state.data,
-                    loadMoreState: state.loadMoreState,
-                  );
+                  if (state.items.isEmpty) {
+                    return _buildEmptyMessage();
+                  } else {
+                    return _SliverBookList(
+                      books: state.items,
+                      loadMoreState: state.loadMoreState,
+                    );
+                  }
                 } else if (state is Failure) {
                   return _buildErrorMessage();
                 }
@@ -109,6 +114,18 @@ class _HomeScreenState extends State<HomeScreen> {
       hasScrollBody: false,
       child: Center(
         child: CircularProgressIndicator(),
+      ),
+    );
+  }
+
+  Widget _buildEmptyMessage() {
+    return SliverFillRemaining(
+      hasScrollBody: false,
+      child: Center(
+        child: Text(
+          R.strings.searchEmptyMessage,
+          textAlign: TextAlign.center,
+        ),
       ),
     );
   }
@@ -237,16 +254,7 @@ class _SliverBookList extends StatelessWidget {
           if (index >= books.length) {
             return _buildLoadMoreItem();
           } else {
-            return Container(
-              padding: EdgeInsets.symmetric(
-                vertical: 35.0,
-              ),
-              child: Row(
-                children: [
-                  Text(books[index].title),
-                ],
-              ),
-            );
+            return BookTile(books[index]);
           }
         },
         childCount: books.length + 1,

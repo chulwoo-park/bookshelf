@@ -15,6 +15,7 @@ class _Strings {
 
   final searchTitle = 'Search';
   final searchHint = 'Titles, Authors, ISBN and More';
+  final searchEmptyMessage = 'No results found.';
   final searchErrorMessage = 'Search failed.\nPlease try again.';
 
   final retry = 'retry';
