@@ -19,4 +19,6 @@ class _Strings {
   final searchErrorMessage = 'Search failed.\nPlease try again.';
 
   final retry = 'retry';
+
+  final free = 'free';
 }
