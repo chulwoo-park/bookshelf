@@ -54,10 +54,7 @@ class BookCache extends LocalBookSource {
           throw CacheMissException();
         }
 
-        final time = DateTime.now();
         final result = _convertToEntity(pref.getString(key));
-        print(DateTime.now().millisecondsSinceEpoch -
-            time.millisecondsSinceEpoch);
         return result;
       },
       onError: (e) {
