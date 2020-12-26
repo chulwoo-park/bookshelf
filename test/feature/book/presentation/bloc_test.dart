@@ -221,4 +221,55 @@ void main() {
       );
     });
   });
+
+  group('book detail bloc test', () {
+    group('book detail requested event test', () {
+      GetDetailUseCase getDetail;
+      BookDetailBloc bloc;
+
+      setUp(() {
+        getDetail = MockGetDetailUseCase();
+        bloc = BookDetailBloc(getDetail);
+      });
+
+      test(
+        'Given error When book detail requested Then state change to failure',
+        () {
+          when(getDetail.execute(any))
+              .thenAnswer((_) => Future.error(Exception()));
+          expect(bloc.state, isA<Initial>());
+          bloc.add(BookDetailRequested('isbn13'));
+          expectLater(
+            bloc,
+            emitsInOrder(
+              [
+                isA<Loading>(),
+                isA<Failure>(),
+              ],
+            ),
+          );
+        },
+      );
+
+      test(
+        'Given some data When book detail requested Then state change to success',
+        () {
+          when(getDetail.execute(any))
+              .thenAnswer((_) => Future.value(mockBookDetail('isbn')));
+
+          expect(bloc.state, isA<Initial>());
+          bloc.add(BookDetailRequested('isbn'));
+          expectLater(
+            bloc,
+            emitsInOrder(
+              [
+                isA<Loading>(),
+                Success(mockBookDetail('isbn')),
+              ],
+            ),
+          );
+        },
+      );
+    });
+  });
 }

@@ -85,3 +85,13 @@ class BookListBloc extends Bloc<BookListEvent, AsyncState> {
     }
   }
 }
+
+class BookDetailBloc extends Bloc<BookDetailEvent, AsyncState> {
+  BookDetailBloc([AsyncState initialState]) : super(initialState);
+
+  @override
+  Stream<AsyncState> mapEventToState(BookDetailEvent event) {
+    // TODO: implement mapEventToState
+    throw UnimplementedError();
+  }
+}

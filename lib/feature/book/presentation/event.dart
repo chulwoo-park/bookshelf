@@ -9,3 +9,11 @@ class BookSearched implements BookListEvent {
 class NextPageRequested implements BookListEvent {
   const NextPageRequested();
 }
+
+abstract class BookDetailEvent {}
+
+class BookDetailRequested implements BookDetailEvent {
+  const BookDetailRequested(this.isbn13);
+
+  final String isbn13;
+}

@@ -19,6 +19,8 @@ BookDetail mockBookDetail(String isbn13) {
 
 class MockSearchUseCase extends Mock implements SearchUseCase {}
 
+class MockGetDetailUseCase extends Mock implements GetDetailUseCase {}
+
 class MockBookRepository extends Mock implements BookRepository {}
 
 class MockLocalBookSource extends Mock implements LocalBookSource {}
