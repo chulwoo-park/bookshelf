@@ -7,6 +7,15 @@ class SearchParam {
 
   final String query;
   final int page;
+
+  @override
+  int get hashCode => 31 + query.hashCode + page.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is SearchParam && query == other.query && page == other.page);
+  }
 }
 
 /// Shows book search information for specific keywords.
