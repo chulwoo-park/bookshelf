@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:bookshelf/feature/book/data/data_source.dart';
 import 'package:bookshelf/feature/book/domain/model.dart';
 import 'package:bookshelf/http/exception.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
 import 'model.dart';
@@ -21,8 +22,8 @@ class BookApi implements RemoteBookSource {
       path += '/$page';
     }
 
-    return client.get(path).then((response) {
-      final json = jsonDecode(response.body);
+    return client.get(path).then((response) async {
+      final json = await compute(jsonDecode, response.body);
 
       final searchResponse = _convertSearchResponse(json);
 

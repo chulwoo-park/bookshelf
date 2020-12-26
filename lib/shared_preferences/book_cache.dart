@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:bookshelf/common/exception/exceptions.dart';
 import 'package:bookshelf/feature/book/data/data_source.dart';
 import 'package:bookshelf/feature/book/domain/model.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BookCache extends LocalBookSource {
@@ -14,7 +15,7 @@ class BookCache extends LocalBookSource {
           throw CacheMissException();
         }
 
-        return pref.getStringList(key).map(_convertToEntity).toList();
+        return Future.wait(pref.getStringList(key).map(_convertToEntity));
       },
       onError: (e) => CacheMissException(),
     );
@@ -22,12 +23,17 @@ class BookCache extends LocalBookSource {
 
   @override
   Future<void> saveList(String key, List<Book> data) {
-    return SharedPreferences.getInstance().then((pref) =>
-        pref.setStringList(key, data.map(_convertToJsonString).toList()));
+    return SharedPreferences.getInstance().then(
+      (pref) async => pref.setStringList(
+        key,
+        await Future.wait(data.map(_convertToJsonString)),
+      ),
+    );
   }
 
-  String _convertToJsonString(Book book) {
-    return jsonEncode(
+  Future<String> _convertToJsonString(Book book) async {
+    return compute(
+      jsonEncode,
       {
         'title': book.title,
         'subtitle': book.subtitle,
@@ -39,8 +45,8 @@ class BookCache extends LocalBookSource {
     );
   }
 
-  Book _convertToEntity(String jsonString) {
-    final json = jsonDecode(jsonString);
+  Future<Book> _convertToEntity(String jsonString) async {
+    final json = await compute(jsonDecode, jsonString);
     return Book(
       json['title'],
       json['subtitle'],
