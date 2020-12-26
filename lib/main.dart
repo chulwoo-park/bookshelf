@@ -4,7 +4,7 @@ import 'package:bookshelf/memory/book_data_source.dart';
 import 'package:flutter/material.dart';
 
 import 'feature/book/data/repository.dart';
-import 'screen/main/home.dart';
+import 'ui/home/home.dart';
 
 void main() {
   final bookRepository = BookRepositoryImpl(
@@ -37,15 +37,22 @@ class BookshelfApp extends StatelessWidget {
 
   ThemeData _createTheme(Brightness brightness) {
     ThemeData baseTheme;
+    Color primaryColor;
+    Color cursorColor;
     Color textColor;
     if (brightness == Brightness.light) {
       baseTheme = ThemeData.light();
+      primaryColor = Color(0xff333333);
+      cursorColor = Color(0xff333333);
       textColor = Colors.black;
     } else {
       baseTheme = ThemeData.dark();
+      primaryColor = Colors.white;
+      cursorColor = Color(0xffeeeeee);
       textColor = Colors.white;
     }
     return baseTheme.copyWith(
+      primaryColor: primaryColor,
       appBarTheme: AppBarTheme(
         color: Colors.transparent,
         elevation: 0.0,
@@ -61,6 +68,9 @@ class BookshelfApp extends StatelessWidget {
           bodyColor: textColor,
         ),
       ),
+      cursorColor: cursorColor,
+      textSelectionHandleColor: cursorColor,
+      textSelectionColor: cursorColor.withOpacity(0.3),
     );
   }
 }
