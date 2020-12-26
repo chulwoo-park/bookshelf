@@ -28,8 +28,22 @@ class SearchUseCase {
 
   Future<Page<Book>> execute(SearchParam param) {
     if (param.query == null || param.query.isEmpty) {
-      throw InvalidQueryException();
+      throw InvalidParameterException();
     }
     return _repository.find(param.query, page: param.page);
   }
+}
+
+class GetDetailParam {
+  const GetDetailParam(this.isbn13);
+
+  final String isbn13;
+}
+
+class GetDetailUseCase {
+  const GetDetailUseCase(this._repository);
+
+  final BookRepository _repository;
+
+  Future<BookDetail> execute(GetDetailParam param) {}
 }

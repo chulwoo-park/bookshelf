@@ -254,7 +254,10 @@ class _SliverBookList extends StatelessWidget {
           if (index >= books.length) {
             return _buildLoadMoreItem();
           } else {
-            return BookTile(books[index]);
+            return InkWell(
+              onTap: () {},
+              child: BookTile(books[index]),
+            );
           }
         },
         childCount: books.length + 1,

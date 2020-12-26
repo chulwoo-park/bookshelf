@@ -11,12 +11,12 @@ void main() {
       final search = SearchUseCase(MockBookRepository());
       expect(
         () => search.execute(SearchParam(null)),
-        throwsA(isA<InvalidQueryException>()),
+        throwsA(isA<InvalidParameterException>()),
       );
 
       expect(
         () => search.execute(SearchParam('')),
-        throwsA(isA<InvalidQueryException>()),
+        throwsA(isA<InvalidParameterException>()),
       );
     });
 

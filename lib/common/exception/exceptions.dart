@@ -1,3 +1,3 @@
 class CacheMissException implements Exception {}
 
-class InvalidQueryException implements Exception {}
+class InvalidParameterException implements Exception {}

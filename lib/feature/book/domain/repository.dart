@@ -8,4 +8,6 @@ abstract class BookRepository {
   /// Results are paginated, and each page can be accessed by [page].
   /// {@endtemplate}
   Future<Page<Book>> find(String query, {int page = 1});
+
+  Future<BookDetail> getDetail(any);
 }

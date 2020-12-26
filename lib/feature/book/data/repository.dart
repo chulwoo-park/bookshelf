@@ -20,4 +20,10 @@ class BookRepositoryImpl implements BookRepository {
               return result;
             }));
   }
+
+  @override
+  Future<BookDetail> getDetail(any) {
+    // TODO: implement getDetail
+    throw UnimplementedError();
+  }
 }

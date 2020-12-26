@@ -27,3 +27,7 @@ class Book {
     return identical(this, other) || (other is Book && other.isbn13 == isbn13);
   }
 }
+
+class BookDetail {
+  const BookDetail();
+}
