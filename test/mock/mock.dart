@@ -13,6 +13,10 @@ Book mockBook(String title) {
   return Book(title, title, title, 0.0, '', '');
 }
 
+BookDetail mockBookDetail(String isbn13) {
+  return BookDetail(isbn13, isbn13);
+}
+
 class MockSearchUseCase extends Mock implements SearchUseCase {}
 
 class MockBookRepository extends Mock implements BookRepository {}

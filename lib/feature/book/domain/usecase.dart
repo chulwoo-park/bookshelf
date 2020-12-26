@@ -45,5 +45,10 @@ class GetDetailUseCase {
 
   final BookRepository _repository;
 
-  Future<BookDetail> execute(GetDetailParam param) {}
+  Future<BookDetail> execute(GetDetailParam param) {
+    if (param.isbn13 == null || param.isbn13.isEmpty) {
+      throw InvalidParameterException();
+    }
+    return _repository.getDetail(param.isbn13);
+  }
 }

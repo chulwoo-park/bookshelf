@@ -29,14 +29,14 @@ void main() {
       final BookRepository repository = MockBookRepository();
 
       when(repository.getDetail(any)).thenAnswer(
-        (_) => Future.value(BookDetail()),
+        (_) => Future.value(mockBookDetail('a')),
       );
 
       final getDetail = GetDetailUseCase(repository);
 
       final result = await getDetail.execute(GetDetailParam(isbn13));
       verify(repository.getDetail(isbn13));
-      expect(result, BookDetail());
+      expect(result, mockBookDetail('a'));
     });
   });
 }

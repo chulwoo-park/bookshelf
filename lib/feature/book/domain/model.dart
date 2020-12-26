@@ -29,5 +29,21 @@ class Book {
 }
 
 class BookDetail {
-  const BookDetail();
+  const BookDetail(
+    this.title,
+    this.isbn13,
+  )   : assert(isbn13 != null),
+        assert(title != null);
+
+  final String title;
+  final String isbn13;
+
+  @override
+  int get hashCode => isbn13.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is BookDetail && other.isbn13 == isbn13);
+  }
 }

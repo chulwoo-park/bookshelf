@@ -22,7 +22,7 @@ class BookRepositoryImpl implements BookRepository {
   }
 
   @override
-  Future<BookDetail> getDetail(any) {
+  Future<BookDetail> getDetail(String isbn13) {
     // TODO: implement getDetail
     throw UnimplementedError();
   }

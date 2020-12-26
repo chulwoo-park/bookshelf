@@ -9,5 +9,5 @@ abstract class BookRepository {
   /// {@endtemplate}
   Future<Page<Book>> find(String query, {int page = 1});
 
-  Future<BookDetail> getDetail(any);
+  Future<BookDetail> getDetail(String isbn13);
 }
