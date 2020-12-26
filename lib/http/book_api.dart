@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:bookshelf/common/model/page.dart';
 import 'package:bookshelf/feature/book/data/data_source.dart';
 import 'package:bookshelf/feature/book/domain/model.dart';
 import 'package:bookshelf/http/exception.dart';
@@ -16,7 +17,7 @@ class BookApi implements RemoteBookSource {
   final Client client;
 
   @override
-  Future<List<Book>> find(String query, {int page = 1}) {
+  Future<Page<Book>> find(String query, {int page = 1}) {
     var path = '$baseUrl/1.0/search/$query';
     if (page != null) {
       path += '/$page';
@@ -28,18 +29,22 @@ class BookApi implements RemoteBookSource {
       final searchResponse = _convertSearchResponse(json);
 
       if (searchResponse.isSuccess) {
-        return searchResponse.books
-            .map(
-              (e) => Book(
-                e.title,
-                e.subtitle,
-                e.isbn13,
-                double.tryParse(e.price.replaceAll('\$', '')),
-                e.image,
-                e.url,
-              ),
-            )
-            .toList();
+        return Page(
+          page: page,
+          totalCount: searchResponse.total,
+          items: searchResponse.books
+              .map(
+                (e) => Book(
+                  e.title,
+                  e.subtitle,
+                  e.isbn13,
+                  double.tryParse(e.price.replaceAll('\$', '')),
+                  e.image,
+                  e.url,
+                ),
+              )
+              .toList(),
+        );
       } else {
         throw RequestFailure(searchResponse.error);
       }
@@ -66,6 +71,7 @@ class BookApi implements RemoteBookSource {
           );
         }).toList();
       }
+
       return SearchResponseVo(
         error,
         total,

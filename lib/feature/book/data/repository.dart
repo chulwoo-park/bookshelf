@@ -1,3 +1,4 @@
+import 'package:bookshelf/common/model/page.dart';
 import 'package:bookshelf/feature/book/data/data_source.dart';
 import 'package:bookshelf/feature/book/domain/model.dart';
 import 'package:bookshelf/feature/book/domain/repository.dart';
@@ -9,7 +10,7 @@ class BookRepositoryImpl implements BookRepository {
   final RemoteBookSource _remoteSource;
 
   @override
-  Future<List<Book>> find(String query, {int page = 1}) async {
+  Future<Page<Book>> find(String query, {int page = 1}) async {
     final cacheKey = '${query}_$page';
 
     return _localSource

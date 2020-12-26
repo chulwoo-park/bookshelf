@@ -1,4 +1,5 @@
 import 'package:bookshelf/common/exception/exceptions.dart';
+import 'package:bookshelf/common/model/page.dart';
 import 'package:bookshelf/feature/book/domain/model.dart';
 import 'package:bookshelf/feature/book/domain/repository.dart';
 
@@ -25,7 +26,7 @@ class SearchUseCase {
 
   final BookRepository _repository;
 
-  Future<List<Book>> execute(SearchParam param) {
+  Future<Page<Book>> execute(SearchParam param) {
     if (param.query == null || param.query.isEmpty) {
       throw InvalidQueryException();
     }

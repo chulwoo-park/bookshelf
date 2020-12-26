@@ -1,3 +1,4 @@
+import 'package:bookshelf/common/model/page.dart';
 import 'package:bookshelf/feature/book/domain/model.dart';
 
 abstract class BookRepository {
@@ -6,5 +7,5 @@ abstract class BookRepository {
   ///
   /// Results are paginated, and each page can be accessed by [page].
   /// {@endtemplate}
-  Future<List<Book>> find(String query, {int page = 1});
+  Future<Page<Book>> find(String query, {int page = 1});
 }
