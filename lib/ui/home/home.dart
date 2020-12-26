@@ -1,6 +1,11 @@
 import 'dart:math';
 
+import 'package:bookshelf/feature/book/domain/model.dart';
+import 'package:bookshelf/feature/book/presentation/bloc.dart';
+import 'package:bookshelf/feature/book/presentation/event.dart';
+import 'package:bookshelf/feature/book/presentation/state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../resources.dart';
 
@@ -12,36 +17,102 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  ScrollController _scrollController;
+
+  BookListBloc get _bloc {
+    if (mounted) {
+      return BlocProvider.of<BookListBloc>(context);
+    } else {
+      return null;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverPersistentHeader(
-            pinned: true,
-            floating: true,
-            delegate: _AppBarDelegate(),
-          ),
-          SliverPadding(
-            padding: EdgeInsets.symmetric(horizontal: 20.0),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  return Container(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 20.0,
-                    ),
-                    child: Row(
-                      children: [
-                        Text('Book'),
-                      ],
-                    ),
-                  );
+      body: NotificationListener<ScrollNotification>(
+        onNotification: _handleScrollNotification,
+        child: CustomScrollView(
+          controller: _scrollController,
+          slivers: [
+            SliverPersistentHeader(
+              pinned: true,
+              floating: true,
+              delegate: _AppBarDelegate(
+                onQueryChanged: (query) {},
+                onQuerySubmitted: (query) {
+                  _bloc?.add(BookSearched(query));
                 },
               ),
             ),
-          ),
-        ],
+            BlocConsumer<BookListBloc, BookListState>(
+              listener: (context, state) {
+                if (state is Success &&
+                    state.loadMoreState == BookListLoadMoreState.idle) {
+                  _loadNextPageIfTooShort(state);
+                }
+              },
+              builder: (context, state) {
+                if (state is Loading) {
+                  return _buildLoadingIndicator();
+                } else if (state is Success) {
+                  return _SliverBookList(
+                    books: state.data,
+                    loadMoreState: state.loadMoreState,
+                  );
+                } else if (state is Failure) {
+                  return _buildErrorMessage();
+                }
+
+                return SliverToBoxAdapter();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _loadNextPageIfTooShort(BookListState state) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final itemsTooShort = _scrollController.position.maxScrollExtent == 0;
+
+      if (itemsTooShort) {
+        _bloc?.add(NextPageRequested());
+      }
+    });
+  }
+
+  bool _handleScrollNotification(ScrollNotification scroll) {
+    if (scroll.metrics.extentAfter < 500) {
+      _bloc.add(NextPageRequested());
+    }
+    return true;
+  }
+
+  Widget _buildLoadingIndicator() {
+    return SliverFillRemaining(
+      hasScrollBody: false,
+      child: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+
+  Widget _buildErrorMessage() {
+    return SliverFillRemaining(
+      hasScrollBody: false,
+      child: Center(
+        child: Text(
+          R.strings.searchErrorMessage,
+          textAlign: TextAlign.center,
+        ),
       ),
     );
   }
@@ -49,6 +120,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
 class _AppBarDelegate extends SliverPersistentHeaderDelegate {
   final titleSize = 45.0;
+
+  final ValueChanged<String> onQueryChanged;
+  final ValueChanged<String> onQuerySubmitted;
+
+  _AppBarDelegate({
+    @required this.onQueryChanged,
+    @required this.onQuerySubmitted,
+  });
 
   @override
   Widget build(
@@ -99,6 +178,9 @@ class _AppBarDelegate extends SliverPersistentHeaderDelegate {
                       SizedBox(width: 5.0),
                       Expanded(
                         child: TextField(
+                          onChanged: onQueryChanged,
+                          onSubmitted: onQuerySubmitted,
+                          textInputAction: TextInputAction.search,
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: R.strings.searchHint,
@@ -126,5 +208,61 @@ class _AppBarDelegate extends SliverPersistentHeaderDelegate {
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
     return false;
+  }
+}
+
+class _SliverBookList extends StatelessWidget {
+  const _SliverBookList({
+    Key key,
+    this.books = const [],
+    this.loadMoreState = BookListLoadMoreState.idle,
+  }) : super(key: key);
+
+  final List<Book> books;
+  final BookListLoadMoreState loadMoreState;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          if (index >= books.length) {
+            return _buildLoadMoreItem();
+          } else {
+            return Container(
+              padding: EdgeInsets.symmetric(
+                vertical: 35.0,
+              ),
+              child: Row(
+                children: [
+                  Text(books[index].title),
+                ],
+              ),
+            );
+          }
+        },
+        childCount: books.length + 1,
+      ),
+    );
+  }
+
+  Widget _buildLoadMoreItem() {
+    switch (loadMoreState) {
+      case BookListLoadMoreState.loading:
+        return Center(child: CircularProgressIndicator());
+      case BookListLoadMoreState.failure:
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(R.strings.searchErrorMessage),
+            FlatButton(
+              onPressed: () {},
+              child: Text(R.strings.retry),
+            ),
+          ],
+        );
+      default:
+        return SizedBox.shrink();
+    }
   }
 }

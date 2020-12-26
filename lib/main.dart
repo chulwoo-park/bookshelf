@@ -1,7 +1,9 @@
 import 'package:bookshelf/di/service_locator.dart';
 import 'package:bookshelf/feature/book/domain/usecase.dart';
+import 'package:bookshelf/feature/book/presentation/bloc.dart';
 import 'package:bookshelf/memory/book_data_source.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'feature/book/data/repository.dart';
 import 'ui/home/home.dart';
@@ -27,11 +29,15 @@ void main() {
 class BookshelfApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final search = ServiceLocator.of(context).search;
     return MaterialApp(
       title: 'Bookshelf',
       theme: _createTheme(Brightness.light),
       darkTheme: _createTheme(Brightness.dark),
-      home: HomeScreen(),
+      home: BlocProvider(
+        create: (context) => BookListBloc(search),
+        child: HomeScreen(),
+      ),
     );
   }
 
