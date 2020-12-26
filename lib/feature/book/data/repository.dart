@@ -23,7 +23,11 @@ class BookRepositoryImpl implements BookRepository {
 
   @override
   Future<BookDetail> getDetail(String isbn13) {
-    // TODO: implement getDetail
-    throw UnimplementedError();
+    return _localSource
+        .getDetail(isbn13)
+        .catchError((_) => _remoteSource.getDetail(isbn13).then((result) {
+              _localSource.saveDetail(isbn13, result);
+              return result;
+            }));
   }
 }
