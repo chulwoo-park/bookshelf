@@ -2,7 +2,7 @@ import 'package:bookshelf/di/service_locator.dart';
 import 'package:bookshelf/feature/book/domain/usecase.dart';
 import 'package:bookshelf/feature/book/presentation/bloc.dart';
 import 'package:bookshelf/http/book_api.dart';
-import 'package:bookshelf/memory/book_data_source.dart';
+import 'package:bookshelf/shared_preferences/book_cache.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -11,7 +11,7 @@ import 'ui/home/home.dart';
 
 void main() {
   final bookRepository = BookRepositoryImpl(
-    MemoryLocalBookSource(),
+    BookCache(),
     BookApi(),
   );
 
