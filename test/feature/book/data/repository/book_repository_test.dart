@@ -82,5 +82,72 @@ void main() {
         },
       );
     });
+
+    group('getDetail test', () {
+      test(
+        'Given isbn13 When getDetail Then cache key should be [isbn13] format',
+        () async {
+          when(localSource.getDetail(any))
+              .thenAnswer((_) => Future.value(mockBookDetail('a')));
+          await repository.getDetail('isbn');
+          verify(localSource.getDetail('isbn'));
+        },
+      );
+
+      test(
+        'Given local data When getDetail Then return data from local',
+        () async {
+          when(localSource.getDetail(any)).thenAnswer(
+            (_) => Future.value(
+              mockBookDetail('a'),
+            ),
+          );
+
+          final result = await repository.getDetail('isbn');
+
+          verify(localSource.getDetail(any));
+          verifyNever(remoteSource.getDetail(any));
+
+          expect(result, mockBookDetail('a'));
+        },
+      );
+
+      test(
+        'Given local error When getDetail Then return data from remote',
+        () async {
+          when(localSource.getDetail(any))
+              .thenAnswer((_) => Future.error(Exception()));
+          when(remoteSource.getDetail(any))
+              .thenAnswer((_) => Future.value(mockBookDetail('a')));
+
+          final result = await repository.getDetail('isbn');
+
+          verifyInOrder([
+            localSource.getDetail('isbn'),
+            remoteSource.getDetail('isbn'),
+          ]);
+
+          expect(result, mockBookDetail('a'));
+        },
+      );
+
+      test(
+        'Given local error When getDetail Then return save remote data into local',
+        () async {
+          when(localSource.getDetail(any))
+              .thenAnswer((_) => Future.error(Exception()));
+          when(remoteSource.getDetail(any))
+              .thenAnswer((_) => Future.value(mockBookDetail('a')));
+
+          await repository.getDetail('isbn');
+
+          verifyInOrder([
+            localSource.getDetail(any),
+            remoteSource.getDetail(any),
+            localSource.saveDetail(any, mockBookDetail('a')),
+          ]);
+        },
+      );
+    });
   });
 }

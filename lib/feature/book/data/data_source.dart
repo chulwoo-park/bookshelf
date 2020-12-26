@@ -9,9 +9,15 @@ abstract class LocalBookSource {
 
   /// Save [data] by [key].
   Future<void> saveList(String key, Page<Book> data);
+
+  Future<BookDetail> getDetail(String isbn13);
+
+  Future<void> saveDetail(String isbn13, BookDetail mockBookDetail);
 }
 
 abstract class RemoteBookSource {
   /// {@macro find_book}
   Future<Page<Book>> find(String query, {int page = 1});
+
+  Future<BookDetail> getDetail(String isbn13);
 }

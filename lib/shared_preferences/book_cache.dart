@@ -72,4 +72,16 @@ class BookCache extends LocalBookSource {
       ),
     );
   }
+
+  @override
+  Future<BookDetail> getDetail(String isbn13) {
+    // TODO: implement getDetail
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> saveDetail(String isbn13, BookDetail mockBookDetail) {
+    // TODO: implement saveDetail
+    throw UnimplementedError();
+  }
 }

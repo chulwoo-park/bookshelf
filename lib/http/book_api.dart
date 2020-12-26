@@ -82,4 +82,10 @@ class BookApi implements RemoteBookSource {
       throw ParsingException(e);
     }
   }
+
+  @override
+  Future<BookDetail> getDetail(String isbn13) {
+    // TODO: implement getDetail
+    throw UnimplementedError();
+  }
 }
