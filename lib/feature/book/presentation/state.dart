@@ -1,26 +1,16 @@
+import 'package:bookshelf/common/model/state.dart';
 import 'package:bookshelf/feature/book/domain/model.dart';
 import 'package:flutter/foundation.dart';
 
-abstract class BookListState {
-  const BookListState();
-
-  @override
-  int get hashCode => runtimeType.hashCode;
-
-  @override
-  bool operator ==(Object other) => runtimeType == other.runtimeType;
+enum BookListLoadMoreState {
+  idle,
+  loading,
+  failure,
+  reachedEnd,
 }
 
-class Initial extends BookListState {
-  const Initial();
-}
-
-class Loading extends BookListState {
-  const Loading();
-}
-
-class Success extends BookListState {
-  const Success(
+class BookListLoaded extends AsyncState {
+  const BookListLoaded(
     this.items, {
     @required this.query,
     @required this.totalCount,
@@ -46,19 +36,19 @@ class Success extends BookListState {
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other is Success &&
+        (other is BookListLoaded &&
             listEquals(items, other.items) &&
             query == other.query &&
             page == other.page &&
             loadMoreState == other.loadMoreState);
   }
 
-  Success copyWith({
+  BookListLoaded copyWith({
     List<Book> data,
     int page,
     BookListLoadMoreState loadMoreState,
   }) {
-    return Success(
+    return BookListLoaded(
       data ?? this.items,
       query: this.query,
       totalCount: this.totalCount,
@@ -71,18 +61,4 @@ class Success extends BookListState {
   String toString() {
     return '{data: $items, query: $query, page: $page, loadMoreState: $loadMoreState}';
   }
-}
-
-class Failure implements BookListState {
-  const Failure(this.error, [this.stackTrace]);
-
-  final Object error;
-  final StackTrace stackTrace;
-}
-
-enum BookListLoadMoreState {
-  idle,
-  loading,
-  failure,
-  reachedEnd,
 }

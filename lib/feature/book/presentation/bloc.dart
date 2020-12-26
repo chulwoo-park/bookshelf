@@ -1,15 +1,16 @@
+import 'package:bookshelf/common/model/state.dart';
 import 'package:bookshelf/feature/book/domain/usecase.dart';
 import 'package:bookshelf/feature/book/presentation/event.dart';
 import 'package:bookshelf/feature/book/presentation/state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class BookListBloc extends Bloc<BookListEvent, BookListState> {
+class BookListBloc extends Bloc<BookListEvent, AsyncState> {
   BookListBloc(this._search) : super(Initial());
 
   final SearchUseCase _search;
 
   @override
-  Stream<BookListState> mapEventToState(BookListEvent event) async* {
+  Stream<AsyncState> mapEventToState(BookListEvent event) async* {
     if (event is BookSearched) {
       yield* _mapSearchEvent(event);
     } else if (event is NextPageRequested) {
@@ -17,7 +18,7 @@ class BookListBloc extends Bloc<BookListEvent, BookListState> {
     }
   }
 
-  Stream<BookListState> _mapSearchEvent(BookSearched event) async* {
+  Stream<AsyncState> _mapSearchEvent(BookSearched event) async* {
     if (state is Loading || event.query == null || event.query.isEmpty) {
       return;
     }
@@ -30,7 +31,7 @@ class BookListBloc extends Bloc<BookListEvent, BookListState> {
           page: 1,
         ),
       );
-      yield Success(
+      yield BookListLoaded(
         List.unmodifiable(result),
         totalCount: result.totalCount,
         query: event.query,
@@ -41,14 +42,14 @@ class BookListBloc extends Bloc<BookListEvent, BookListState> {
     }
   }
 
-  Stream<BookListState> _mapNextPageRequestedEvent(
+  Stream<AsyncState> _mapNextPageRequestedEvent(
     NextPageRequested event,
   ) async* {
-    if (this.state is! Success) {
+    if (this.state is! BookListLoaded) {
       return;
     }
 
-    final Success state = this.state;
+    final BookListLoaded state = this.state;
     if (state.loadMoreState == BookListLoadMoreState.loading ||
         state.totalCount == state.items.length) {
       return;

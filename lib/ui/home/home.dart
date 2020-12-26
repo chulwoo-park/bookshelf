@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:bookshelf/common/model/state.dart';
 import 'package:bookshelf/feature/book/domain/model.dart';
 import 'package:bookshelf/feature/book/presentation/bloc.dart';
 import 'package:bookshelf/feature/book/presentation/event.dart';
@@ -30,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   bool get canRequestLoadMore {
     final currentState = _bloc?.state;
-    return currentState is Success &&
+    return currentState is BookListLoaded &&
         currentState.loadMoreState == BookListLoadMoreState.idle;
   }
 
@@ -58,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
             ),
-            BlocConsumer<BookListBloc, BookListState>(
+            BlocConsumer<BookListBloc, AsyncState>(
               listener: (context, state) {
                 if (canRequestLoadMore) {
                   _loadNextPageIfTooShort(state);
@@ -67,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
               builder: (context, state) {
                 if (state is Loading) {
                   return _buildLoadingIndicator();
-                } else if (state is Success) {
+                } else if (state is BookListLoaded) {
                   if (state.items.isEmpty) {
                     return _buildEmptyMessage();
                   } else {
@@ -89,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _loadNextPageIfTooShort(BookListState state) {
+  void _loadNextPageIfTooShort(AsyncState state) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!canRequestLoadMore) return;
 

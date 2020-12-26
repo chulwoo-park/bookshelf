@@ -1,3 +1,4 @@
+import 'package:bookshelf/common/model/state.dart';
 import 'package:bookshelf/feature/book/domain/usecase.dart';
 import 'package:bookshelf/feature/book/presentation/bloc.dart';
 import 'package:bookshelf/feature/book/presentation/event.dart';
@@ -50,7 +51,7 @@ void main() {
             emitsInOrder(
               [
                 isA<Loading>(),
-                Success(
+                BookListLoaded(
                   [],
                   query: 'query',
                   loadMoreState: BookListLoadMoreState.idle,
@@ -89,7 +90,7 @@ void main() {
             emitsInOrder(
               [
                 isA<Loading>(),
-                isA<Success>(),
+                isA<BookListLoaded>(),
               ],
             ),
           );
@@ -140,14 +141,14 @@ void main() {
             emitsInOrder(
               [
                 isA<Loading>(),
-                isA<Success>(),
-                Success(
+                isA<BookListLoaded>(),
+                BookListLoaded(
                   mockPage([mockBook('a')]),
                   totalCount: 2,
                   query: 'query',
                   loadMoreState: BookListLoadMoreState.loading,
                 ),
-                Success(
+                BookListLoaded(
                   mockPage([mockBook('a')]),
                   totalCount: 2,
                   query: 'query',
@@ -181,21 +182,21 @@ void main() {
             emitsInOrder(
               [
                 isA<Loading>(),
-                Success(
+                BookListLoaded(
                   mockPage([mockBook('a')]),
                   totalCount: 2,
                   query: 'query',
                   page: 1,
                   loadMoreState: BookListLoadMoreState.idle,
                 ),
-                Success(
+                BookListLoaded(
                   mockPage([mockBook('a')]),
                   totalCount: 2,
                   query: 'query',
                   page: 1,
                   loadMoreState: BookListLoadMoreState.loading,
                 ),
-                Success(
+                BookListLoaded(
                   mockPage([mockBook('a'), mockBook('b')]),
                   totalCount: 2,
                   query: 'query',
