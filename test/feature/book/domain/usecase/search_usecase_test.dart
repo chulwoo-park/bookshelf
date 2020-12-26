@@ -1,5 +1,4 @@
 import 'package:bookshelf/common/exception/exceptions.dart';
-import 'package:bookshelf/feature/book/domain/model.dart';
 import 'package:bookshelf/feature/book/domain/usecase.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -36,8 +35,8 @@ void main() {
       when(repository.find(query)).thenAnswer(
         (_) => Future.value(
           [
-            Book('a'),
-            Book('b'),
+            mockBook('a'),
+            mockBook('b'),
           ],
         ),
       );
@@ -46,7 +45,7 @@ void main() {
 
       final result = await search.execute(SearchParam(query));
       verify(repository.find(query));
-      expect(result, [Book('a'), Book('b')]);
+      expect(result, [mockBook('a'), mockBook('b')]);
     });
   });
 }

@@ -1,6 +1,5 @@
-import 'package:bookshelf/feature/book/data/repository.dart';
 import 'package:bookshelf/feature/book/data/data_source.dart';
-import 'package:bookshelf/feature/book/domain/model.dart';
+import 'package:bookshelf/feature/book/data/repository.dart';
 import 'package:bookshelf/feature/book/domain/repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -24,7 +23,7 @@ void main() {
         'Given query and page When find Then cache key should be [query]_[page] format',
         () async {
           when(localSource.getList(any))
-              .thenAnswer((_) => Future.value([Book('a')]));
+              .thenAnswer((_) => Future.value([mockBook('a')]));
           await repository.find('query', page: 1);
           verify(localSource.getList('query_1'));
         },
@@ -34,14 +33,14 @@ void main() {
         'Given local data When find Then return data from local',
         () async {
           when(localSource.getList(any))
-              .thenAnswer((_) => Future.value([Book('a')]));
+              .thenAnswer((_) => Future.value([mockBook('a')]));
 
           final result = await repository.find('query');
 
           verify(localSource.getList(any));
           verifyNever(remoteSource.find(any));
 
-          expect(result, [Book('a')]);
+          expect(result, [mockBook('a')]);
         },
       );
 
@@ -51,7 +50,7 @@ void main() {
           when(localSource.getList(any))
               .thenAnswer((_) => Future.error(Exception()));
           when(remoteSource.find(any))
-              .thenAnswer((_) => Future.value([Book('a')]));
+              .thenAnswer((_) => Future.value([mockBook('a')]));
 
           final result = await repository.find('query');
 
@@ -60,7 +59,7 @@ void main() {
             remoteSource.find('query'),
           ]);
 
-          expect(result, [Book('a')]);
+          expect(result, [mockBook('a')]);
         },
       );
 
@@ -70,14 +69,14 @@ void main() {
           when(localSource.getList(any))
               .thenAnswer((_) => Future.error(Exception()));
           when(remoteSource.find(any))
-              .thenAnswer((_) => Future.value([Book('a')]));
+              .thenAnswer((_) => Future.value([mockBook('a')]));
 
           await repository.find('query');
 
           verifyInOrder([
             localSource.getList(any),
             remoteSource.find(any),
-            localSource.saveList(any, [Book('a')]),
+            localSource.saveList(any, [mockBook('a')]),
           ]);
         },
       );

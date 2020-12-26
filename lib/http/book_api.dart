@@ -16,7 +16,6 @@ class BookApi implements RemoteBookSource {
 
   @override
   Future<List<Book>> find(String query, {int page = 1}) {
-    print('find: $page');
     var path = '$baseUrl/1.0/search/$query';
     if (page != null) {
       path += '/$page';
@@ -28,7 +27,18 @@ class BookApi implements RemoteBookSource {
       final searchResponse = _convertSearchResponse(json);
 
       if (searchResponse.isSuccess) {
-        return searchResponse.books.map((e) => Book(e.title)).toList();
+        return searchResponse.books
+            .map(
+              (e) => Book(
+                e.title,
+                e.subtitle,
+                e.isbn13,
+                double.tryParse(e.price.replaceAll('\$', '')),
+                e.image,
+                e.url,
+              ),
+            )
+            .toList();
       } else {
         throw RequestFailure(searchResponse.error);
       }

@@ -30,12 +30,24 @@ class BookCache extends LocalBookSource {
     return jsonEncode(
       {
         'title': book.title,
+        'subtitle': book.subtitle,
+        'isbn13': book.isbn13,
+        'price': book.price,
+        'image': book.image,
+        'url': book.url,
       },
     );
   }
 
   Book _convertToEntity(String jsonString) {
     final json = jsonDecode(jsonString);
-    return Book(json['title']);
+    return Book(
+      json['title'],
+      json['subtitle'],
+      json['isbn13'],
+      json['price'],
+      json['image'],
+      json['url'],
+    );
   }
 }

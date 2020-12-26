@@ -1,4 +1,3 @@
-import 'package:bookshelf/feature/book/domain/model.dart';
 import 'package:bookshelf/feature/book/domain/usecase.dart';
 import 'package:bookshelf/feature/book/presentation/bloc.dart';
 import 'package:bookshelf/feature/book/presentation/event.dart';
@@ -130,9 +129,9 @@ void main() {
         'Given success state When load more Then the loaded data is added to end of previous data',
         () {
           when(search.execute(SearchParam('query', page: 1)))
-              .thenAnswer((_) => Future.value([Book('a')]));
+              .thenAnswer((_) => Future.value([mockBook('a')]));
           when(search.execute(SearchParam('query', page: 2)))
-              .thenAnswer((_) => Future.value([Book('b')]));
+              .thenAnswer((_) => Future.value([mockBook('b')]));
 
           expect(bloc.state, isA<Initial>());
           bloc.add(BookSearched('query'));
@@ -143,19 +142,19 @@ void main() {
               [
                 isA<Loading>(),
                 Success(
-                  [Book('a')],
+                  [mockBook('a')],
                   query: 'query',
                   page: 1,
                   loadMoreState: BookListLoadMoreState.idle,
                 ),
                 Success(
-                  [Book('a')],
+                  [mockBook('a')],
                   query: 'query',
                   page: 1,
                   loadMoreState: BookListLoadMoreState.loading,
                 ),
                 Success(
-                  [Book('a'), Book('b')],
+                  [mockBook('a'), mockBook('b')],
                   query: 'query',
                   page: 2,
                   loadMoreState: BookListLoadMoreState.idle,
