@@ -1,3 +1,11 @@
 abstract class NoteEvent {}
 
-class NoteAddedEvent implements NoteEvent {}
+class NoteListRequested implements NoteEvent {
+  const NoteListRequested();
+}
+
+class NoteAdded implements NoteEvent {
+  const NoteAdded(this.contents);
+
+  final String contents;
+}

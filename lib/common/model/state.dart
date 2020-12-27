@@ -1,11 +1,13 @@
-abstract class AsyncState {
-  const AsyncState();
-
+mixin TypeEquatableMixin {
   @override
   int get hashCode => runtimeType.hashCode;
 
   @override
   bool operator ==(Object other) => runtimeType == other.runtimeType;
+}
+
+abstract class AsyncState with TypeEquatableMixin {
+  const AsyncState();
 }
 
 class Initial extends AsyncState {

@@ -1,15 +1,16 @@
-import 'package:bookshelf/common/model/state.dart';
 import 'package:bookshelf/feature/note/domain/usecase.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'event.dart';
+import 'state.dart';
 
-class NoteListBloc extends Bloc<NoteEvent, AsyncState> {
-  NoteListBloc(this._addNote, this._getNotes) : super(Initial());
+class NoteListBloc extends Bloc<NoteEvent, NoteListState> {
+  NoteListBloc(this.isbn, this._addNote, this._getNotes) : super(Initial());
 
+  final String isbn;
   final AddNoteUseCase _addNote;
   final GetNotesUseCase _getNotes;
 
   @override
-  Stream<AsyncState> mapEventToState(NoteEvent event) async* {}
+  Stream<NoteListState> mapEventToState(NoteEvent event) async* {}
 }
