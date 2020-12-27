@@ -62,6 +62,8 @@ class BookDetail {
   final String url;
   final List<Pdf> pdfs;
 
+  bool get isFree => price == null || price == 0.0;
+
   @override
   int get hashCode => isbn13.hashCode;
 

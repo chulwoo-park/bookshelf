@@ -16,12 +16,14 @@ void main() {
   );
 
   final search = SearchUseCase(bookRepository);
+  final getDetail = GetDetailUseCase(bookRepository);
 
   runApp(
     ServiceLocator(
       dependencies: Dependencies(
         child: BookshelfApp(),
         search: search,
+        getDetail: getDetail,
       ),
     ),
   );
@@ -50,7 +52,7 @@ class BookshelfApp extends StatelessWidget {
     if (brightness == Brightness.light) {
       baseTheme = ThemeData.light();
       primaryColor = Color(0xff333333);
-      cursorColor = Color(0xff333333);
+      cursorColor = primaryColor;
       textColor = Colors.black;
     } else {
       baseTheme = ThemeData.dark();
@@ -61,9 +63,12 @@ class BookshelfApp extends StatelessWidget {
     return baseTheme.copyWith(
       primaryColor: primaryColor,
       appBarTheme: AppBarTheme(
-        color: Colors.transparent,
+        color: baseTheme.scaffoldBackgroundColor,
         elevation: 0.0,
         brightness: brightness,
+        iconTheme: IconThemeData(
+          color: primaryColor,
+        ),
         textTheme: TextTheme(
           headline6: TextStyle(
             fontSize: 20.0,

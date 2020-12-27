@@ -1,10 +1,12 @@
 import 'dart:math';
 
 import 'package:bookshelf/common/model/state.dart';
+import 'package:bookshelf/di/service_locator.dart';
 import 'package:bookshelf/feature/book/domain/model.dart';
 import 'package:bookshelf/feature/book/presentation/bloc.dart';
 import 'package:bookshelf/feature/book/presentation/event.dart';
 import 'package:bookshelf/feature/book/presentation/state.dart';
+import 'package:bookshelf/ui/detail/detail.dart';
 import 'package:bookshelf/ui/home/widget/book_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -39,6 +41,12 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _scrollController = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -255,8 +263,19 @@ class _SliverBookList extends StatelessWidget {
           if (index >= books.length) {
             return _buildLoadMoreItem();
           } else {
+            final getDetail = ServiceLocator.of(context).getDetail;
             return InkWell(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BlocProvider(
+                      create: (context) => BookDetailBloc(getDetail),
+                      child: DetailScreen(books[index]),
+                    ),
+                  ),
+                );
+              },
               child: BookTile(books[index]),
             );
           }

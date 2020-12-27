@@ -36,6 +36,7 @@ class Dependencies extends InheritedWidget {
     Key key,
     @required Widget child,
     @required this.search,
+    @required this.getDetail,
   })  : assert(child != null),
         super(
           key: key,
@@ -43,6 +44,7 @@ class Dependencies extends InheritedWidget {
         );
 
   final SearchUseCase search;
+  final GetDetailUseCase getDetail;
 
   @override
   bool updateShouldNotify(Dependencies old) {

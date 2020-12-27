@@ -18,6 +18,8 @@ class _Strings {
   final searchEmptyMessage = 'No results found.';
   final searchErrorMessage = 'Search failed.\nPlease try again.';
 
+  final detailErrorMessage = 'Load failed.\nPlease try again.';
+
   final retry = 'retry';
 
   final free = 'free';
