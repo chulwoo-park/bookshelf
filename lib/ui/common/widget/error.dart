@@ -20,6 +20,9 @@ class ErrorMessage extends StatelessWidget {
         children: [
           Text(
             message,
+            style: TextStyle(
+              height: 1.5,
+            ),
             textAlign: TextAlign.center,
           ),
           if (onRetry != null) ...[

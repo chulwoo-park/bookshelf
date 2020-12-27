@@ -1,3 +1,4 @@
+import 'package:bookshelf/common/exception/exceptions.dart';
 import 'package:bookshelf/common/model/state.dart';
 import 'package:bookshelf/di/service_locator.dart';
 import 'package:bookshelf/feature/book/domain/model.dart';
@@ -57,7 +58,7 @@ class _DetailScreenState extends State<DetailScreen> {
               } else if (state is Loading) {
                 return _buildLoadingIndicator();
               } else if (state is Failure) {
-                return _buildErrorMessage();
+                return _buildErrorMessage(state.error);
               } else if (state is Success<BookDetail>) {
                 final detail = state.data;
                 return SliverPadding(
@@ -90,7 +91,7 @@ class _DetailScreenState extends State<DetailScreen> {
                           ),
                         ],
                         SizedBox(height: 15.0),
-                        Text('by ${detail.authors}'),
+                        Text(R.strings.authors(detail.authors)),
                         SizedBox(height: 28.0),
                         Row(
                           children: [
@@ -127,7 +128,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                   builder: (context, followLink) => InkWell(
                                     onTap: followLink,
                                     child: Text(
-                                      'MORE',
+                                      R.strings.more.toUpperCase(),
                                       style: TextStyle(
                                         color: Colors.lightBlue,
                                       ),
@@ -273,11 +274,13 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 
-  Widget _buildErrorMessage() {
+  Widget _buildErrorMessage(dynamic error) {
     return SliverFillRemaining(
       hasScrollBody: false,
       child: ErrorMessage(
-        message: R.strings.detailErrorMessage,
+        message: error is NetworkConnectivityException
+            ? R.strings.checkNetworkMessage
+            : R.strings.detailErrorMessage,
         onRetry: _refresh,
       ),
     );

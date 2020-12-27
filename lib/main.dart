@@ -22,8 +22,8 @@ void main() {
     PersistentNote(),
   );
 
-  final search = SearchUseCase(bookRepository);
-  final getDetail = GetDetailUseCase(bookRepository);
+  final searchBook = SearchBookUseCase(bookRepository);
+  final getBookDetail = GetBookDetailUseCase(bookRepository);
   final addNote = AddNoteUseCase(noteRepository);
   final getNotes = GetNotesUseCase(noteRepository);
 
@@ -31,8 +31,8 @@ void main() {
     ServiceLocator(
       dependencies: Dependencies(
         child: BookshelfApp(),
-        search: search,
-        getDetail: getDetail,
+        searchBook: searchBook,
+        getBookDetail: getBookDetail,
         addNote: addNote,
         getNotes: getNotes,
       ),
@@ -43,13 +43,13 @@ void main() {
 class BookshelfApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final search = ServiceLocator.of(context).search;
+    final searchBook = ServiceLocator.of(context).searchBook;
     return MaterialApp(
       title: 'Bookshelf',
       theme: _createTheme(Brightness.light),
       darkTheme: _createTheme(Brightness.dark),
       home: BlocProvider(
-        create: (context) => BookListBloc(search),
+        create: (context) => BookListBloc(searchBook),
         child: HomeScreen(),
       ),
     );

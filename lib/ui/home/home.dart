@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:bookshelf/common/exception/exceptions.dart';
 import 'package:bookshelf/common/model/state.dart';
 import 'package:bookshelf/di/service_locator.dart';
 import 'package:bookshelf/feature/book/domain/model.dart';
@@ -23,6 +24,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   ScrollController _scrollController;
+  TextEditingController _queryController;
 
   BookListBloc get _bloc {
     if (mounted) {
@@ -42,12 +44,20 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _scrollController = ScrollController();
+    _queryController = TextEditingController();
   }
 
   @override
   void dispose() {
+    _queryController.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  void _search(String query) {
+    if (query != null && query.trim().isNotEmpty) {
+      _bloc?.add(BookSearched(query.trim()));
+    }
   }
 
   @override
@@ -63,9 +73,8 @@ class _HomeScreenState extends State<HomeScreen> {
               floating: true,
               delegate: _AppBarDelegate(
                 onQueryChanged: (query) {},
-                onQuerySubmitted: (query) {
-                  _bloc?.add(BookSearched(query));
-                },
+                onQuerySubmitted: (query) => _search(query),
+                controller: _queryController,
               ),
             ),
             BlocConsumer<BookListBloc, AsyncState>(
@@ -82,12 +91,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     return _buildEmptyMessage();
                   } else {
                     return _SliverBookList(
+                      retryQuery: _queryController.text,
                       books: state.items,
                       loadMoreState: state.loadMoreState,
                     );
                   }
                 } else if (state is Failure) {
-                  return _buildErrorMessage();
+                  return _buildErrorMessage(state.error);
                 }
 
                 return SliverToBoxAdapter();
@@ -140,29 +150,30 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildErrorMessage() {
+  Widget _buildErrorMessage(dynamic error) {
     return SliverFillRemaining(
       hasScrollBody: false,
-      child: Center(
-        child: Text(
-          R.strings.searchErrorMessage,
-          textAlign: TextAlign.center,
-        ),
+      child: ErrorMessage(
+        message: error is NetworkConnectivityException
+            ? R.strings.checkNetworkMessage
+            : R.strings.searchErrorMessage,
+        onRetry: () => _search(_queryController.text),
       ),
     );
   }
 }
 
 class _AppBarDelegate extends SliverPersistentHeaderDelegate {
-  final titleSize = 45.0;
-
-  final ValueChanged<String> onQueryChanged;
-  final ValueChanged<String> onQuerySubmitted;
-
   _AppBarDelegate({
     @required this.onQueryChanged,
     @required this.onQuerySubmitted,
+    this.controller,
   });
+  final titleSize = 45.0;
+
+  final TextEditingController controller;
+  final ValueChanged<String> onQueryChanged;
+  final ValueChanged<String> onQuerySubmitted;
 
   @override
   Widget build(
@@ -213,6 +224,7 @@ class _AppBarDelegate extends SliverPersistentHeaderDelegate {
                       SizedBox(width: 5.0),
                       Expanded(
                         child: TextField(
+                          controller: controller,
                           onChanged: onQueryChanged,
                           onSubmitted: onQuerySubmitted,
                           textInputAction: TextInputAction.search,
@@ -249,14 +261,27 @@ class _AppBarDelegate extends SliverPersistentHeaderDelegate {
 class _SliverBookList extends StatelessWidget {
   const _SliverBookList({
     Key key,
-    @required this.query,
     this.books = const [],
     this.loadMoreState = BookListLoadMoreState.idle,
+    this.retryQuery,
   }) : super(key: key);
 
-  final String query;
   final List<Book> books;
   final BookListLoadMoreState loadMoreState;
+  final String retryQuery;
+
+  Future<void> _showDetail(BuildContext context, Book book) {
+    final getBookDetail = ServiceLocator.of(context).getBookDetail;
+    return Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BlocProvider(
+          create: (context) => BookDetailBloc(getBookDetail),
+          child: DetailScreen(book),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -266,19 +291,8 @@ class _SliverBookList extends StatelessWidget {
           if (index >= books.length) {
             return _buildLoadMoreItem(context);
           } else {
-            final getDetail = ServiceLocator.of(context).getDetail;
             return InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => BlocProvider(
-                      create: (context) => BookDetailBloc(getDetail),
-                      child: DetailScreen(books[index]),
-                    ),
-                  ),
-                );
-              },
+              onTap: () => _showDetail(context, books[index]),
               child: BookTile(books[index]),
             );
           }
@@ -295,9 +309,12 @@ class _SliverBookList extends StatelessWidget {
       case BookListLoadMoreState.failure:
         return ErrorMessage(
           message: R.strings.searchErrorMessage,
-          onRetry: () {
-            BlocProvider.of<BookListBloc>(context)?.add(BookSearched(query));
-          },
+          onRetry: retryQuery != null
+              ? () {
+                  BlocProvider.of<BookListBloc>(context)
+                      ?.add(BookSearched(retryQuery));
+                }
+              : null,
         );
       default:
         return SizedBox.shrink();

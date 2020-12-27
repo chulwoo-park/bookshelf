@@ -9,14 +9,14 @@ import '../../../../mock/mock.dart';
 void main() {
   group('get detail use case test', () {
     test('When get detail without isbn13 Then throw error', () {
-      final search = GetDetailUseCase(MockBookRepository());
+      final searchBook = GetBookDetailUseCase(MockBookRepository());
       expect(
-        () => search.execute(GetDetailParam(null)),
+        () => searchBook.execute(GetBookDetailParam(null)),
         throwsA(isA<InvalidParameterException>()),
       );
 
       expect(
-        () => search.execute(GetDetailParam('')),
+        () => searchBook.execute(GetBookDetailParam('')),
         throwsA(isA<InvalidParameterException>()),
       );
     });
@@ -31,9 +31,9 @@ void main() {
         (_) => Future.value(mockBookDetail('a')),
       );
 
-      final getDetail = GetDetailUseCase(repository);
+      final getDetail = GetBookDetailUseCase(repository);
 
-      final result = await getDetail.execute(GetDetailParam(isbn13));
+      final result = await getDetail.execute(GetBookDetailParam(isbn13));
       verify(repository.getDetail(isbn13));
       expect(result, mockBookDetail('a'));
     });

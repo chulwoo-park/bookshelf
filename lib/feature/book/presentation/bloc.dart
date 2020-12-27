@@ -5,9 +5,9 @@ import 'package:bookshelf/feature/book/presentation/state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class BookListBloc extends Bloc<BookListEvent, AsyncState> {
-  BookListBloc(this._search) : super(Initial());
+  BookListBloc(this._searchBook) : super(Initial());
 
-  final SearchUseCase _search;
+  final SearchBookUseCase _searchBook;
 
   @override
   Stream<AsyncState> mapEventToState(BookListEvent event) async* {
@@ -25,8 +25,8 @@ class BookListBloc extends Bloc<BookListEvent, AsyncState> {
 
     yield Loading();
     try {
-      final result = await _search.execute(
-        SearchParam(
+      final result = await _searchBook.execute(
+        SearchBookParam(
           event.query,
           page: 1,
         ),
@@ -58,8 +58,8 @@ class BookListBloc extends Bloc<BookListEvent, AsyncState> {
     yield state.copyWith(loadMoreState: BookListLoadMoreState.loading);
 
     try {
-      final result = await _search.execute(
-        SearchParam(
+      final result = await _searchBook.execute(
+        SearchBookParam(
           state.query,
           page: state.page + 1,
         ),
@@ -87,9 +87,9 @@ class BookListBloc extends Bloc<BookListEvent, AsyncState> {
 }
 
 class BookDetailBloc extends Bloc<BookDetailEvent, AsyncState> {
-  BookDetailBloc(this._getDetail) : super(Initial());
+  BookDetailBloc(this._getBookDetail) : super(Initial());
 
-  final GetDetailUseCase _getDetail;
+  final GetBookDetailUseCase _getBookDetail;
 
   @override
   Stream<AsyncState> mapEventToState(BookDetailEvent event) async* {
@@ -107,7 +107,8 @@ class BookDetailBloc extends Bloc<BookDetailEvent, AsyncState> {
 
     yield Loading();
     try {
-      final result = await _getDetail.execute(GetDetailParam(event.isbn13));
+      final result =
+          await _getBookDetail.execute(GetBookDetailParam(event.isbn13));
       yield Success(result);
     } catch (e, s) {
       yield Failure(e, s);

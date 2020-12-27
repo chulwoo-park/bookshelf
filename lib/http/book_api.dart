@@ -1,5 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:bookshelf/common/exception/exceptions.dart';
 import 'package:bookshelf/common/model/page.dart';
 import 'package:bookshelf/feature/book/data/data_source.dart';
 import 'package:bookshelf/feature/book/domain/model.dart';
@@ -77,6 +80,28 @@ class BookApi implements RemoteBookSource {
 
   final Client client;
 
+  _convertNetworkError(dynamic error) {
+    if (error is SocketException) {
+      throw NetworkConnectivityException();
+    } else {
+      throw error;
+    }
+  }
+
+  Future<Response> _validateResponse(Response response) {
+    final statusCode = response.statusCode;
+    if (statusCode == 200) {
+      return Future.value(response);
+    } else if (statusCode >= 500) {
+      return Future.error(ServerError(statusCode, response.body));
+    } else if (statusCode >= 400) {
+      return Future.error(ClientError(statusCode, response.body));
+    } else {
+      return Future.error(
+          RequestFailure('Failed to request: ${response.statusCode}'));
+    }
+  }
+
   @override
   Future<Page<Book>> find(String query, {int page = 1}) {
     var path = '$baseUrl/1.0/search/$query';
@@ -84,7 +109,11 @@ class BookApi implements RemoteBookSource {
       path += '/$page';
     }
 
-    return client.get(path).then((response) async {
+    return client
+        .get(path)
+        .catchError(_convertNetworkError)
+        .then(_validateResponse)
+        .then((response) async {
       final json = await compute(jsonDecode, response.body);
 
       final searchResponse = _convertSearchResponse(json);
@@ -115,7 +144,11 @@ class BookApi implements RemoteBookSource {
   @override
   Future<BookDetail> getDetail(String isbn13) {
     var path = '$baseUrl/1.0/books/$isbn13';
-    return client.get(path).then((response) async {
+    return client
+        .get(path)
+        .catchError(_convertNetworkError)
+        .then(_validateResponse)
+        .then((response) async {
       final json = await compute(jsonDecode, response.body);
 
       final detailResponse = _convertBookDetailResponse(json);

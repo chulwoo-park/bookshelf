@@ -11,18 +11,18 @@ import '../../../mock/mock.dart';
 void main() {
   group('book list bloc test', () {
     group('book searched event test', () {
-      SearchUseCase search;
+      SearchBookUseCase searchBook;
       BookListBloc bloc;
 
       setUp(() {
-        search = MockSearchUseCase();
-        bloc = BookListBloc(search);
+        searchBook = MockSearchBookUseCase();
+        bloc = BookListBloc(searchBook);
       });
 
       test(
         'Given error When book searched Then state change to failure',
         () {
-          when(search.execute(any))
+          when(searchBook.execute(any))
               .thenAnswer((_) => Future.error(Exception()));
           expect(bloc.state, isA<Initial>());
           bloc.add(BookSearched('query'));
@@ -41,7 +41,7 @@ void main() {
       test(
         'Given some data When book searched by query Then state change to success with idle load more state',
         () {
-          when(search.execute(any))
+          when(searchBook.execute(any))
               .thenAnswer((_) => Future.value(mockPage([])));
 
           expect(bloc.state, isA<Initial>());
@@ -74,18 +74,18 @@ void main() {
     });
 
     group('next page requested event test', () {
-      SearchUseCase search;
+      SearchBookUseCase searchBook;
       BookListBloc bloc;
 
       setUp(() {
-        search = MockSearchUseCase();
-        bloc = BookListBloc(search);
+        searchBook = MockSearchBookUseCase();
+        bloc = BookListBloc(searchBook);
       });
 
       test(
-        'Given total data When search Then next page never load',
+        'Given total data When searchBook Then next page never load',
         () async {
-          when(search.execute(any)).thenAnswer(
+          when(searchBook.execute(any)).thenAnswer(
             (_) => Future.value(
               mockPage(
                 [
@@ -116,7 +116,7 @@ void main() {
       test(
         'Given failure state When load more Then next page never load',
         () async {
-          when(search.execute(any))
+          when(searchBook.execute(any))
               .thenAnswer((_) => Future.error(Exception()));
           bloc.add(BookSearched('foo'));
           expectLater(
@@ -139,9 +139,10 @@ void main() {
       test(
         'Given error When load more Then state change to success with failure load more state',
         () async {
-          when(search.execute(SearchParam('query', page: 1))).thenAnswer(
-              (_) => Future.value(mockPage([mockBook('a')], totalCount: 2)));
-          when(search.execute(SearchParam('query', page: 2)))
+          when(searchBook.execute(SearchBookParam('query', page: 1)))
+              .thenAnswer((_) =>
+                  Future.value(mockPage([mockBook('a')], totalCount: 2)));
+          when(searchBook.execute(SearchBookParam('query', page: 2)))
               .thenAnswer((_) => Future.error(Exception()));
 
           expect(bloc.state, isA<Initial>());
@@ -174,12 +175,14 @@ void main() {
       test(
         'Given success state When load more Then the loaded data is added to end of previous data',
         () {
-          when(search.execute(SearchParam('query', page: 1))).thenAnswer(
+          when(searchBook.execute(SearchBookParam('query', page: 1)))
+              .thenAnswer(
             (_) => Future.value(
               mockPage([mockBook('a')], totalCount: 2),
             ),
           );
-          when(search.execute(SearchParam('query', page: 2))).thenAnswer(
+          when(searchBook.execute(SearchBookParam('query', page: 2)))
+              .thenAnswer(
             (_) => Future.value(
               mockPage([mockBook('b')]),
             ),
@@ -224,18 +227,18 @@ void main() {
 
   group('book detail bloc test', () {
     group('book detail requested event test', () {
-      GetDetailUseCase getDetail;
+      GetBookDetailUseCase getBookDetail;
       BookDetailBloc bloc;
 
       setUp(() {
-        getDetail = MockGetDetailUseCase();
-        bloc = BookDetailBloc(getDetail);
+        getBookDetail = MockGetBookDetailUseCase();
+        bloc = BookDetailBloc(getBookDetail);
       });
 
       test(
         'Given error When book detail requested Then state change to failure',
         () {
-          when(getDetail.execute(any))
+          when(getBookDetail.execute(any))
               .thenAnswer((_) => Future.error(Exception()));
           expect(bloc.state, isA<Initial>());
           bloc.add(BookDetailRequested('isbn13'));
@@ -254,7 +257,7 @@ void main() {
       test(
         'Given some data When book detail requested Then state change to success',
         () {
-          when(getDetail.execute(any))
+          when(getBookDetail.execute(any))
               .thenAnswer((_) => Future.value(mockBookDetail('isbn')));
 
           expect(bloc.state, isA<Initial>());

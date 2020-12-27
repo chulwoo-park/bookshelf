@@ -8,20 +8,20 @@ import '../../../../mock/mock.dart';
 void main() {
   group('Search use case test', () {
     test('When search by empty query Then throw error', () async {
-      final search = SearchUseCase(MockBookRepository());
+      final searchBook = SearchBookUseCase(MockBookRepository());
       expect(
-        () => search.execute(SearchParam(null)),
+        () => searchBook.execute(SearchBookParam(null)),
         throwsA(isA<InvalidParameterException>()),
       );
 
       expect(
-        () => search.execute(SearchParam('')),
+        () => searchBook.execute(SearchBookParam('')),
         throwsA(isA<InvalidParameterException>()),
       );
     });
 
     test("When search without specific page Then call search with page 1", () {
-      final param = SearchParam('foo');
+      final param = SearchBookParam('foo');
 
       expect(param.page, 1);
     });
@@ -41,9 +41,9 @@ void main() {
         ),
       );
 
-      final search = SearchUseCase(repository);
+      final searchBook = SearchBookUseCase(repository);
 
-      final result = await search.execute(SearchParam(query));
+      final result = await searchBook.execute(SearchBookParam(query));
       verify(repository.find(query));
       expect(result, [mockBook('a'), mockBook('b')]);
     });

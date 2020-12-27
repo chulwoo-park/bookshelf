@@ -36,8 +36,8 @@ class Dependencies extends InheritedWidget {
   Dependencies({
     Key key,
     @required Widget child,
-    @required this.search,
-    @required this.getDetail,
+    @required this.searchBook,
+    @required this.getBookDetail,
     @required this.addNote,
     @required this.getNotes,
   })  : assert(child != null),
@@ -46,16 +46,16 @@ class Dependencies extends InheritedWidget {
           child: child,
         );
 
-  final SearchUseCase search;
-  final GetDetailUseCase getDetail;
+  final SearchBookUseCase searchBook;
+  final GetBookDetailUseCase getBookDetail;
   final AddNoteUseCase addNote;
   final GetNotesUseCase getNotes;
 
   @override
   bool updateShouldNotify(Dependencies old) {
     return child != old.child ||
-        search != old.search ||
-        getDetail != old.getDetail ||
+        searchBook != old.searchBook ||
+        getBookDetail != old.getBookDetail ||
         addNote != old.addNote ||
         getNotes != old.getNotes;
   }

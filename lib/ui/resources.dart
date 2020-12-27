@@ -13,6 +13,9 @@ class _Colors {
 class _Strings {
   const _Strings();
 
+  final checkNetworkMessage =
+      'Slow or no internet connection.\nPlease check your internet settings.';
+
   final searchTitle = 'Search';
   final searchHint = 'Titles, Authors, ISBN and More';
   final searchEmptyMessage = 'No results found.';
@@ -23,6 +26,7 @@ class _Strings {
   final retry = 'retry';
   final free = 'free';
   final ok = 'ok';
+  final more = 'more';
 
   final labelPublished = 'published';
   final labelPublisher = 'publisher';
@@ -34,4 +38,6 @@ class _Strings {
   final noteHint = 'Enter a note';
   final noteAddErrorMessage = 'Failed to write the note!';
   final noteErrorMessage = 'Load failed.\nPlease try again.';
+
+  String authors(String authors) => 'by $authors';
 }

@@ -43,9 +43,9 @@ Note mockNote(
   return Note(isbn, contents ?? isbn);
 }
 
-class MockSearchUseCase extends Mock implements SearchUseCase {}
+class MockSearchBookUseCase extends Mock implements SearchBookUseCase {}
 
-class MockGetDetailUseCase extends Mock implements GetDetailUseCase {}
+class MockGetBookDetailUseCase extends Mock implements GetBookDetailUseCase {}
 
 class MockAddNoteUseCase extends Mock implements AddNoteUseCase {}
 
