@@ -26,7 +26,14 @@ class Success extends NoteListState {
 }
 
 class Failure extends NoteListState {
-  const Failure(this.data, this.error, [this.stackTrace]);
+  const Failure(this.error, [this.stackTrace]);
+
+  final Object error;
+  final StackTrace stackTrace;
+}
+
+class FailureAdd extends NoteListState {
+  const FailureAdd(this.data, this.error, [this.stackTrace]);
 
   final List<Note> data;
   final Object error;
@@ -38,6 +45,6 @@ class Failure extends NoteListState {
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other is Success && listEquals(other.data, data));
+        (other is FailureAdd && listEquals(other.data, data));
   }
 }

@@ -34,9 +34,10 @@ void main() {
           });
 
           when(addNote.execute(any)).thenAnswer((invocation) {
+            final AddNoteParam param = invocation.positionalArguments[0];
             return Future.value(Note(
-              invocation.positionalArguments[0],
-              invocation.positionalArguments[1],
+              isbn,
+              param.contents,
             ));
           });
 
@@ -55,7 +56,7 @@ void main() {
                 Success([
                   mockNote(isbn, 'a'),
                   mockNote(isbn, 'b'),
-                  Note(isbn, 'contents'),
+                  mockNote(isbn, 'contents'),
                 ]),
               ],
             ),
@@ -91,7 +92,7 @@ void main() {
                     mockNote(isbn, 'b'),
                   ],
                 ),
-                Failure(
+                FailureAdd(
                   [
                     mockNote(isbn, 'a'),
                     mockNote(isbn, 'b'),
