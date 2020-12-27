@@ -25,12 +25,3 @@ abstract class RemoteBookSource {
   /// {@macro book_detail}
   Future<BookDetail> getDetail(String isbn13);
 }
-
-abstract class LocalNoteSource {
-  /// Returns the data for the given [key] or returns empty list if [key] is
-  /// not in the local source.
-  Future<List<Note>> getList(String key);
-
-  /// Save [data].
-  Future<void> add(Note data);
-}

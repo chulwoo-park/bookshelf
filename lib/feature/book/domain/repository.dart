@@ -1,5 +1,6 @@
 import 'package:bookshelf/common/model/page.dart';
-import 'package:bookshelf/feature/book/domain/model.dart';
+
+import 'model.dart';
 
 abstract class BookRepository {
   /// {@template find_book}
@@ -13,10 +14,4 @@ abstract class BookRepository {
   /// Returns detail information of book by [isbn13].
   /// {@endtemplate}
   Future<BookDetail> getDetail(String isbn13);
-}
-
-abstract class NoteRepository {
-  Future<Note> create(String isbn, String contents);
-
-  Future<List<Note>> getList(String isbn);
 }

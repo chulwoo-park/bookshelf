@@ -2,6 +2,9 @@ import 'package:bookshelf/feature/book/data/data_source.dart';
 import 'package:bookshelf/feature/book/data/repository.dart';
 import 'package:bookshelf/feature/book/domain/model.dart';
 import 'package:bookshelf/feature/book/domain/repository.dart';
+import 'package:bookshelf/feature/note/data/data_source.dart';
+import 'package:bookshelf/feature/note/data/repository.dart';
+import 'package:bookshelf/feature/note/domain/repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 

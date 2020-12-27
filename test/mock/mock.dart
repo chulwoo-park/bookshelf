@@ -3,6 +3,10 @@ import 'package:bookshelf/feature/book/data/data_source.dart';
 import 'package:bookshelf/feature/book/domain/model.dart';
 import 'package:bookshelf/feature/book/domain/repository.dart';
 import 'package:bookshelf/feature/book/domain/usecase.dart';
+import 'package:bookshelf/feature/note/data/data_source.dart';
+import 'package:bookshelf/feature/note/domain/model.dart';
+import 'package:bookshelf/feature/note/domain/repository.dart';
+import 'package:bookshelf/feature/note/domain/usecase.dart';
 import 'package:mockito/mockito.dart';
 
 Page<Book> mockPage(List<Book> books, {int totalCount}) {
@@ -42,6 +46,10 @@ Note mockNote(
 class MockSearchUseCase extends Mock implements SearchUseCase {}
 
 class MockGetDetailUseCase extends Mock implements GetDetailUseCase {}
+
+class MockAddNoteUseCase extends Mock implements AddNoteUseCase {}
+
+class MockGetNotesUseCase extends Mock implements GetNotesUseCase {}
 
 class MockBookRepository extends Mock implements BookRepository {}
 

@@ -1,7 +1,8 @@
 import 'package:bookshelf/common/model/page.dart';
-import 'package:bookshelf/feature/book/data/data_source.dart';
 import 'package:bookshelf/feature/book/domain/model.dart';
 import 'package:bookshelf/feature/book/domain/repository.dart';
+
+import 'data_source.dart';
 
 class BookRepositoryImpl implements BookRepository {
   const BookRepositoryImpl(this._localSource, this._remoteSource);
@@ -29,22 +30,5 @@ class BookRepositoryImpl implements BookRepository {
               _localSource.saveDetail(isbn13, result);
               return result;
             }));
-  }
-}
-
-class NoteRepositoryImpl implements NoteRepository {
-  const NoteRepositoryImpl(this._localSource);
-
-  final LocalNoteSource _localSource;
-
-  @override
-  Future<Note> create(String isbn, String contents) {
-    final note = Note(isbn, contents);
-    return _localSource.add(note).then((_) => note);
-  }
-
-  @override
-  Future<List<Note>> getList(String isbn) {
-    return _localSource.getList(isbn);
   }
 }
