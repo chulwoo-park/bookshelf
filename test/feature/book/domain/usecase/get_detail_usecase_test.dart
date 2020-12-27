@@ -1,5 +1,4 @@
 import 'package:bookshelf/common/exception/exceptions.dart';
-import 'package:bookshelf/feature/book/domain/model.dart';
 import 'package:bookshelf/feature/book/domain/repository.dart';
 import 'package:bookshelf/feature/book/domain/usecase.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -8,8 +7,8 @@ import 'package:mockito/mockito.dart';
 import '../../../../mock/mock.dart';
 
 void main() {
-  group('GetDetail use case test', () {
-    test('When get detail without isbn13 Then throw error', () async {
+  group('get detail use case test', () {
+    test('When get detail without isbn13 Then throw error', () {
       final search = GetDetailUseCase(MockBookRepository());
       expect(
         () => search.execute(GetDetailParam(null)),

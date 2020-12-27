@@ -16,6 +16,7 @@ class Page<T> with ListMixin<T> implements List<T> {
 
   @override
   int get length => _items.length;
+
   set length(value) {
     _items.length = value;
   }
