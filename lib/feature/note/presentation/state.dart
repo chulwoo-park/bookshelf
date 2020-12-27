@@ -10,10 +10,8 @@ class Initial extends NoteListState {}
 
 class Loading extends NoteListState {}
 
-class Success extends NoteListState {
-  const Success(this.data);
-
-  final List<Note> data;
+mixin HasDataState on NoteListState {
+  List<Note> get data;
 
   @override
   int get hashCode => super.hashCode + data.hashCode;
@@ -21,8 +19,15 @@ class Success extends NoteListState {
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other is Success && listEquals(other.data, data));
+        (other is HasDataState && listEquals(other.data, data));
   }
+}
+
+class Success extends NoteListState with HasDataState {
+  const Success(this.data);
+
+  @override
+  final List<Note> data;
 }
 
 class Failure extends NoteListState {
@@ -32,19 +37,18 @@ class Failure extends NoteListState {
   final StackTrace stackTrace;
 }
 
-class FailureAdd extends NoteListState {
-  const FailureAdd(this.data, this.error, [this.stackTrace]);
-
-  final List<Note> data;
-  final Object error;
-  final StackTrace stackTrace;
+class FailureAdd extends Failure with HasDataState {
+  const FailureAdd(this.data, Object error, [StackTrace stackTrace])
+      : super(error, stackTrace);
 
   @override
-  int get hashCode => super.hashCode + data.hashCode;
+  final List<Note> data;
+
+  @override
+  int get hashCode => super.hashCode;
 
   @override
   bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other is FailureAdd && listEquals(other.data, data));
+    return identical(other, this);
   }
 }

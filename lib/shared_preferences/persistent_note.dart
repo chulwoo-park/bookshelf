@@ -3,11 +3,15 @@ import 'package:bookshelf/feature/note/domain/model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PersistentNote extends LocalNoteSource {
-  List<Note> _getList(SharedPreferences prefs, String isbn) {
-    if (prefs.containsKey(isbn)) {
+  String _keyOf(String isbn) {
+    return 'note_$isbn';
+  }
+
+  List<Note> _getList(SharedPreferences prefs, String key) {
+    if (prefs.containsKey(key)) {
       return prefs
-          .getStringList(isbn)
-          .map((contents) => Note(isbn, contents))
+          .getStringList(key)
+          .map((contents) => Note(key, contents))
           .toList();
     } else {
       return [];
@@ -15,28 +19,31 @@ class PersistentNote extends LocalNoteSource {
   }
 
   Future<void> _saveList(
-      SharedPreferences prefs, String isbn, List<Note> notes) {
+      SharedPreferences prefs, String key, List<Note> notes) {
     if (notes.isEmpty) {
-      return prefs.remove(isbn);
+      return prefs.remove(key);
     } else {
       return prefs.setStringList(
-          isbn, notes.map((note) => note.contents).toList());
+        key,
+        notes.map((note) => note.contents).toList(),
+      );
     }
   }
 
   @override
-  Future<List<Note>> getList(String key) {
-    return SharedPreferences.getInstance().then((pref) => _getList(pref, key));
+  Future<List<Note>> getList(String isbn13) {
+    return SharedPreferences.getInstance()
+        .then((pref) => _getList(pref, _keyOf(isbn13)));
   }
 
   @override
   Future<void> add(Note data) {
     return SharedPreferences.getInstance().then(
       (pref) async {
-        List<Note> notes = _getList(pref, data.isbn);
+        List<Note> notes = _getList(pref, _keyOf(data.isbn13));
         notes.add(data);
 
-        return _saveList(pref, data.isbn, notes);
+        return _saveList(pref, _keyOf(data.isbn13), notes);
       },
     );
   }

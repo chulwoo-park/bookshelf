@@ -6,6 +6,7 @@ import 'package:bookshelf/feature/book/domain/model.dart';
 import 'package:bookshelf/feature/book/presentation/bloc.dart';
 import 'package:bookshelf/feature/book/presentation/event.dart';
 import 'package:bookshelf/feature/book/presentation/state.dart';
+import 'package:bookshelf/ui/common/widget/error.dart';
 import 'package:bookshelf/ui/detail/detail.dart';
 import 'package:bookshelf/ui/home/widget/book_tile.dart';
 import 'package:flutter/material.dart';
@@ -248,10 +249,12 @@ class _AppBarDelegate extends SliverPersistentHeaderDelegate {
 class _SliverBookList extends StatelessWidget {
   const _SliverBookList({
     Key key,
+    @required this.query,
     this.books = const [],
     this.loadMoreState = BookListLoadMoreState.idle,
   }) : super(key: key);
 
+  final String query;
   final List<Book> books;
   final BookListLoadMoreState loadMoreState;
 
@@ -261,7 +264,7 @@ class _SliverBookList extends StatelessWidget {
       delegate: SliverChildBuilderDelegate(
         (context, index) {
           if (index >= books.length) {
-            return _buildLoadMoreItem();
+            return _buildLoadMoreItem(context);
           } else {
             final getDetail = ServiceLocator.of(context).getDetail;
             return InkWell(
@@ -285,20 +288,16 @@ class _SliverBookList extends StatelessWidget {
     );
   }
 
-  Widget _buildLoadMoreItem() {
+  Widget _buildLoadMoreItem(BuildContext context) {
     switch (loadMoreState) {
       case BookListLoadMoreState.loading:
         return Center(child: CircularProgressIndicator());
       case BookListLoadMoreState.failure:
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(R.strings.searchErrorMessage),
-            FlatButton(
-              onPressed: () {},
-              child: Text(R.strings.retry),
-            ),
-          ],
+        return ErrorMessage(
+          message: R.strings.searchErrorMessage,
+          onRetry: () {
+            BlocProvider.of<BookListBloc>(context)?.add(BookSearched(query));
+          },
         );
       default:
         return SizedBox.shrink();

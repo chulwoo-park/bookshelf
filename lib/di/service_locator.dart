@@ -1,4 +1,5 @@
 import 'package:bookshelf/feature/book/domain/usecase.dart';
+import 'package:bookshelf/feature/note/domain/usecase.dart';
 import 'package:flutter/widgets.dart';
 
 class ServiceLocator extends StatefulWidget {
@@ -37,6 +38,8 @@ class Dependencies extends InheritedWidget {
     @required Widget child,
     @required this.search,
     @required this.getDetail,
+    @required this.addNote,
+    @required this.getNotes,
   })  : assert(child != null),
         super(
           key: key,
@@ -45,9 +48,15 @@ class Dependencies extends InheritedWidget {
 
   final SearchUseCase search;
   final GetDetailUseCase getDetail;
+  final AddNoteUseCase addNote;
+  final GetNotesUseCase getNotes;
 
   @override
   bool updateShouldNotify(Dependencies old) {
-    return child != old.child || search != old.search;
+    return child != old.child ||
+        search != old.search ||
+        getDetail != old.getDetail ||
+        addNote != old.addNote ||
+        getNotes != old.getNotes;
   }
 }

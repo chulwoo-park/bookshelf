@@ -9,13 +9,13 @@ class NoteRepositoryImpl implements NoteRepository {
   final LocalNoteSource _localSource;
 
   @override
-  Future<Note> create(String isbn, String contents) {
-    final note = Note(isbn, contents);
+  Future<Note> create(String isbn13, String contents) {
+    final note = Note(isbn13, contents);
     return _localSource.add(note).then((_) => note);
   }
 
   @override
-  Future<List<Note>> getList(String isbn) {
-    return _localSource.getList(isbn);
+  Future<List<Note>> getList(String isbn13) {
+    return _localSource.getList(isbn13);
   }
 }

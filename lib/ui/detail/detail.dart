@@ -1,14 +1,18 @@
 import 'package:bookshelf/common/model/state.dart';
+import 'package:bookshelf/di/service_locator.dart';
 import 'package:bookshelf/feature/book/domain/model.dart';
 import 'package:bookshelf/feature/book/presentation/bloc.dart';
 import 'package:bookshelf/feature/book/presentation/event.dart';
+import 'package:bookshelf/feature/note/presentation/bloc.dart';
 import 'package:bookshelf/ui/common/widget/cached_network_image.dart';
+import 'package:bookshelf/ui/common/widget/error.dart';
 import 'package:bookshelf/ui/common/widget/star_rating.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/link.dart';
 
 import '../resources.dart';
+import 'note_list.dart';
 
 class DetailScreen extends StatefulWidget {
   const DetailScreen(this.data, {Key key}) : super(key: key);
@@ -35,7 +39,7 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   void _refresh() {
-    _bloc.add(BookDetailRequested(widget.data.isbn13));
+    _bloc?.add(BookDetailRequested(widget.data.isbn13));
   }
 
   @override
@@ -94,7 +98,7 @@ class _DetailScreenState extends State<DetailScreen> {
                             Spacer(),
                             if (detail.isFree)
                               Text(
-                                'FREE',
+                                R.strings.free.toUpperCase(),
                                 style: TextStyle(
                                   fontSize: 17.0,
                                 ),
@@ -144,22 +148,22 @@ class _DetailScreenState extends State<DetailScreen> {
                               TableCellVerticalAlignment.middle,
                           children: [
                             _TableRow(
-                              label: 'PUBLISHED',
+                              label: R.strings.labelPublished,
                               child: Text('${detail.year}'),
                             ),
                             _TableSpacer(),
                             _TableRow(
-                              label: 'PUBLISHER',
+                              label: R.strings.labelPublisher,
                               child: Text(detail.publisher),
                             ),
                             _TableSpacer(),
                             _TableRow(
-                              label: 'YEAR',
+                              label: R.strings.labelYear,
                               child: Text('${detail.year}'),
                             ),
                             _TableSpacer(),
                             _TableRow(
-                              label: 'ISBN',
+                              label: R.strings.labelIsbn,
                               child: Row(
                                 children: [
                                   Text(detail.isbn10),
@@ -173,7 +177,7 @@ class _DetailScreenState extends State<DetailScreen> {
                         if (detail.pdfs.isNotEmpty) ...[
                           SizedBox(height: 12.0),
                           Text(
-                            'PDF',
+                            R.strings.labelPdf,
                             style: TextStyle(
                               fontSize: 15.0,
                               fontWeight: FontWeight.bold,
@@ -226,6 +230,37 @@ class _DetailScreenState extends State<DetailScreen> {
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        isExtended: true,
+        icon: Icon(
+          Icons.article_rounded,
+          color: Colors.white,
+        ),
+        label: Text(
+          R.strings.notes,
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Colors.red[900],
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            builder: (context) {
+              final locator = ServiceLocator.of(context);
+              return BlocProvider(
+                create: (context) => NoteListBloc(
+                  widget.data.isbn13,
+                  locator.addNote,
+                  locator.getNotes,
+                ),
+                child: NoteList(),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 
@@ -241,25 +276,9 @@ class _DetailScreenState extends State<DetailScreen> {
   Widget _buildErrorMessage() {
     return SliverFillRemaining(
       hasScrollBody: false,
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              R.strings.detailErrorMessage,
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 12.0),
-            MaterialButton(
-              child: Text(R.strings.retry),
-              color: Colors.black.withOpacity(0.8),
-              textColor: Colors.white,
-              onPressed: () {
-                _refresh();
-              },
-            ),
-          ],
-        ),
+      child: ErrorMessage(
+        message: R.strings.detailErrorMessage,
+        onRetry: _refresh,
       ),
     );
   }
@@ -272,7 +291,7 @@ class _TableRow extends TableRow {
   }) : super(
           children: [
             Text(
-              label,
+              label.toUpperCase(),
               style: TextStyle(
                 fontSize: 15.0,
                 fontWeight: FontWeight.bold,

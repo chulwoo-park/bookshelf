@@ -21,6 +21,17 @@ class _Strings {
   final detailErrorMessage = 'Load failed.\nPlease try again.';
 
   final retry = 'retry';
-
   final free = 'free';
+  final ok = 'ok';
+
+  final labelPublished = 'published';
+  final labelPublisher = 'publisher';
+  final labelYear = 'year';
+  final labelIsbn = 'isbn';
+  final labelPdf = 'pdf';
+
+  final notes = 'Notes';
+  final noteHint = 'Enter a note';
+  final noteAddErrorMessage = 'Failed to write the note!';
+  final noteErrorMessage = 'Load failed.\nPlease try again.';
 }

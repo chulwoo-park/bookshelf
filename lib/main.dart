@@ -1,8 +1,11 @@
 import 'package:bookshelf/di/service_locator.dart';
 import 'package:bookshelf/feature/book/domain/usecase.dart';
 import 'package:bookshelf/feature/book/presentation/bloc.dart';
+import 'package:bookshelf/feature/note/data/repository.dart';
+import 'package:bookshelf/feature/note/domain/usecase.dart';
 import 'package:bookshelf/http/book_api.dart';
 import 'package:bookshelf/shared_preferences/book_cache.dart';
+import 'package:bookshelf/shared_preferences/persistent_note.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -15,8 +18,14 @@ void main() {
     BookApi(),
   );
 
+  final noteRepository = NoteRepositoryImpl(
+    PersistentNote(),
+  );
+
   final search = SearchUseCase(bookRepository);
   final getDetail = GetDetailUseCase(bookRepository);
+  final addNote = AddNoteUseCase(noteRepository);
+  final getNotes = GetNotesUseCase(noteRepository);
 
   runApp(
     ServiceLocator(
@@ -24,6 +33,8 @@ void main() {
         child: BookshelfApp(),
         search: search,
         getDetail: getDetail,
+        addNote: addNote,
+        getNotes: getNotes,
       ),
     ),
   );
@@ -80,7 +91,6 @@ class BookshelfApp extends StatelessWidget {
           bodyColor: textColor,
         ),
       ),
-      cursorColor: cursorColor,
       textSelectionHandleColor: cursorColor,
       textSelectionColor: cursorColor.withOpacity(0.3),
     );
