@@ -14,7 +14,22 @@ Book mockBook(String title) {
 }
 
 BookDetail mockBookDetail(String isbn13) {
-  return BookDetail(isbn13, isbn13);
+  return BookDetail(
+    isbn13,
+    isbn13,
+    isbn13,
+    isbn13,
+    isbn13,
+    isbn13,
+    1,
+    2020,
+    5.0,
+    isbn13,
+    0.0,
+    '',
+    '',
+    [],
+  );
 }
 
 class MockSearchUseCase extends Mock implements SearchUseCase {}

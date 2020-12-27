@@ -12,7 +12,7 @@ abstract class LocalBookSource {
 
   Future<BookDetail> getDetail(String isbn13);
 
-  Future<void> saveDetail(String isbn13, BookDetail mockBookDetail);
+  Future<void> saveDetail(String isbn13, BookDetail detail);
 }
 
 abstract class RemoteBookSource {
