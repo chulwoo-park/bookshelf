@@ -14,3 +14,9 @@ abstract class BookRepository {
   /// {@endtemplate}
   Future<BookDetail> getDetail(String isbn13);
 }
+
+abstract class NoteRepository {
+  Future<Note> create(String isbn, String contents);
+
+  Future<List<Note>> getList(String isbn);
+}

@@ -89,3 +89,7 @@ class Pdf {
         (other is Pdf && title == other.title && url == other.url);
   }
 }
+
+class Note {
+  const Note();
+}

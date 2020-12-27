@@ -53,3 +53,34 @@ class GetDetailUseCase {
     return _repository.getDetail(param.isbn13);
   }
 }
+
+class AddNoteParam {
+  const AddNoteParam(this.isbn13, this.contents);
+
+  final String isbn13;
+  final String contents;
+}
+
+/// Allows the user to take a note.
+class AddNoteUseCase {
+  const AddNoteUseCase(this._repository);
+
+  final NoteRepository _repository;
+
+  Future<Note> execute(AddNoteParam param) {}
+}
+
+class GetNotesParam {
+  const GetNotesParam(this.isbn13);
+
+  final String isbn13;
+}
+
+/// Allows the user to take a note.
+class GetNotesUseCase {
+  const GetNotesUseCase(this._repository);
+
+  final NoteRepository _repository;
+
+  Future<Note> execute(GetNotesParam param) {}
+}

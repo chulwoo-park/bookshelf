@@ -32,11 +32,17 @@ BookDetail mockBookDetail(String isbn13) {
   );
 }
 
+Note mockNote(String isbn, String contents) {
+  return Note();
+}
+
 class MockSearchUseCase extends Mock implements SearchUseCase {}
 
 class MockGetDetailUseCase extends Mock implements GetDetailUseCase {}
 
 class MockBookRepository extends Mock implements BookRepository {}
+
+class MockNoteRepository extends Mock implements NoteRepository {}
 
 class MockLocalBookSource extends Mock implements LocalBookSource {}
 
