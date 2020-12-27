@@ -40,6 +40,7 @@ class GetDetailParam {
   final String isbn13;
 }
 
+/// Shows detailed information of the selected book among the book list.
 class GetDetailUseCase {
   const GetDetailUseCase(this._repository);
 
