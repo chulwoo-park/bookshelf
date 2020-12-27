@@ -67,7 +67,16 @@ class AddNoteUseCase {
 
   final NoteRepository _repository;
 
-  Future<Note> execute(AddNoteParam param) {}
+  Future<Note> execute(AddNoteParam param) {
+    if (param.isbn13 == null ||
+        param.isbn13.isEmpty ||
+        param.contents == null ||
+        param.contents.isEmpty) {
+      throw InvalidParameterException();
+    }
+
+    return _repository.create(param.isbn13, param.contents);
+  }
 }
 
 class GetNotesParam {
@@ -82,5 +91,11 @@ class GetNotesUseCase {
 
   final NoteRepository _repository;
 
-  Future<Note> execute(GetNotesParam param) {}
+  Future<List<Note>> execute(GetNotesParam param) {
+    if (param.isbn13 == null || param.isbn13.isEmpty) {
+      throw InvalidParameterException();
+    }
+
+    return _repository.getList(param.isbn13);
+  }
 }
